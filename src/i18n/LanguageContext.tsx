@@ -1,0 +1,2434 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+
+export type Language = 'pt' | 'en' | 'es' | 'fr';
+
+export interface LanguageOption {
+  code: Language;
+  shortLabel: string;
+  label: string;
+  flag: string;
+  googleFlagSvg: string;
+}
+
+export const LANGUAGES: LanguageOption[] = [
+  {
+    code: 'pt',
+    shortLabel: 'PT-BR',
+    label: 'Português (BR)',
+    flag: '🇧🇷',
+    googleFlagSvg: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f1e7_1f1f7/emoji.svg',
+  },
+  {
+    code: 'en',
+    shortLabel: 'EN-US',
+    label: 'English (US)',
+    flag: '🇺🇸',
+    googleFlagSvg: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f1fa_1f1f8/emoji.svg',
+  },
+  {
+    code: 'es',
+    shortLabel: 'ES',
+    label: 'Español',
+    flag: '🇪🇸',
+    googleFlagSvg: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f1ea_1f1f8/emoji.svg',
+  },
+  {
+    code: 'fr',
+    shortLabel: 'FR',
+    label: 'Français',
+    flag: '🇫🇷',
+    googleFlagSvg: 'https://fonts.gstatic.com/s/e/notoemoji/latest/1f1eb_1f1f7/emoji.svg',
+  },
+];
+
+export const TRANSLATIONS: Record<Language, Record<string, string>> = {
+  pt: {
+    "step_1_ph_linkedin": "ex: linkedin.com/in/seunome",
+    "step_1_ph_portfolio": "ex: meutrabalho.com / portfolio",
+    "step_3_err_company": "Informe o nome da empresa.",
+    "step_3_err_role": "Informe o cargo ocupado.",
+    "step_3_pattern_hint": "Padrão: mm/aaaa",
+    "step_3_err_start_incomplete": "Data incompleta. Preencha mm/aaaa (ex: 03/2020).",
+    "step_3_err_start_empty": "Informe a data de início (mm/aaaa).",
+    "step_3_err_end_incomplete": "Data incompleta. Preencha mm/aaaa (ex: 11/2023).",
+    "step_3_err_end_empty": "Informe a data de término (ou marque abaixo \"Trabalho atualmente\").",
+    "step_3_err_end_before_start": "A data de término não pode ser anterior à data de início.",
+    "step_3_err_activities": "Descreva brevemente as atividades que você desempenhava.",
+    "step_3_err_add_one": "Adicione pelo menos 1 experiência profissional ou marque a opção de primeiro emprego acima.",
+    "step_4_err_add_one": "Adicione pelo menos 1 formação acadêmica ou nível de escolaridade.",
+    "step_4_formation_prefix": "Formação #",
+    "step_4_err_course": "Informe o curso ou escolaridade (ex: Ensino Médio).",
+    "step_4_err_institution": "Informe o nome da escola ou faculdade.",
+    "step_4_err_start_year": "Informe um ano válido com 4 dígitos (ex: 2018).",
+    "step_4_err_end_year": "Informe um ano válido com 4 dígitos (ex: 2022).",
+    "step_4_err_end_before_start": "O ano de conclusão não pode ser anterior ao ano de início.",
+    "step_5_err_select_one": "Selecione pelo menos uma competência profissional ou ferramenta para o seu currículo.",
+    "step_6_err_fill_all": "Preencha o Nome e a Instituição de cada curso adicionado ou remova o item em branco.",
+    "step_6_course_prefix": "Curso #",
+    "step_6_err_course_name": "Informe o nome do curso.",
+    "step_6_err_institution": "Informe a instituição.",
+    "step_6_err_year": "Informe um ano com 4 dígitos (ex: 2023).",
+    "step_7_matched_skills": "✓ Competências encontradas no seu perfil:",
+    "step_7_essential_keywords": "Palavras-chave essenciais da vaga:",
+    "step_7_ai_tips": "💡 Dicas da IA para este processo seletivo:",
+    "step_8_warning_incomplete_title": "Atenção: Campos obrigatórios incompletos",
+    "step_8_warning_incomplete_desc": "Para garantir que seu currículo passe nos filtros das empresas e tenha qualidade profissional, preencha os itens marcados como Pendente abaixo clicando em Editar.",
+    step_2_missing_error: "Informe o cargo almejado (etapa 2).",
+    step_3_no_exp_title: "Em busca do primeiro emprego / Sem experiência formal anterior",
+    step_3_no_exp_sub: "Marque esta opção se você for estudante, jovem aprendiz ou estiver ingressando no mercado de trabalho agora.",
+    step_3_no_exp_alert_title: "Perfil Sem Experiência Formal Selecionado",
+    step_3_no_exp_alert_desc: "Perfeito! O CURRÊ irá estruturar seu currículo com foco estratégico na sua Formação Acadêmica, Cursos & Certificações e Habilidades Práticas, destacando o seu potencial para os recrutadores.",
+    step_3_no_exp_revert: "Prefiro preencher minhas experiências profissionais",
+    step_3_ai_tip: "Não se preocupe em usar palavras difíceis. Escreva de forma simples o que você fazia no dia a dia que nossa IA organiza em realizações profissionais de impacto.",
+    step_3_company_number: "Experiência #",
+    label_remove: "Remover",
+    label_present: "Atual",
+    btn_add: "Adicionar",
+    step_3_company_label: "Nome da Empresa",
+    step_3_company_placeholder: "ex: Distribuidora Silva, Padaria Central, Escritório Modelo",
+    step_3_role_label: "Cargo / Função",
+    step_3_role_placeholder: "ex: Assistente Administrativo, Auxiliar de Loja",
+    step_3_start_label: "Data de Início",
+    step_3_end_label: "Data de Término",
+    step_3_pattern_mmyyyy: "Padrão: mm/aaaa",
+    step_3_current_job: "Trabalho atualmente nesta empresa",
+    step_3_activities_label: "Atividades e responsabilidades do dia a dia",
+    step_3_activities_placeholder: "ex: Atendia clientes, organizava o estoque, emitia relatórios e controlava o caixa...",
+    step_3_results_label: "Resultados, conquistas ou melhorias alcançadas (Opcional)",
+    step_3_results_placeholder: "ex: Reduziu tempo de conferência em 30% após padronizar rotinas...",
+    step_3_error_company: "Informe o nome da empresa.",
+    step_3_error_role: "Informe o cargo ocupado.",
+    step_3_error_start_date: "Informe a data de início (mm/aaaa).",
+    step_3_error_end_date: "Informe a data de término (ou marque que trabalha atualmente).",
+    step_3_error_chronology: "A data de término não pode ser anterior à data de início.",
+    step_3_error_activities: "Descreva brevemente as atividades que você desempenhava.",
+    step_3_missing_error: "Preencha suas experiências ou marque primeiro emprego.",
+    step_4_course_label: "Curso / Escolaridade",
+    step_4_course_ph: "ex: Ensino Médio Completo, Administração de Empresas, Técnico em Logística...",
+    step_4_inst_label: "Instituição de Ensino / Escola",
+    step_4_inst_ph: "ex: Escola Estadual Santos Dumont, Universidade Federal, SENAI...",
+    step_4_start_year: "Ano de Início",
+    step_4_end_year: "Ano de Conclusão / Previsão",
+    step_4_status_label: "Situação",
+    step_4_formation_num: "Formação",
+    step_4_error_min_detail: "Adicione pelo menos 1 formação acadêmica ou nível de escolaridade.",
+    step_4_error_course: "Informe o curso ou escolaridade (ex: Ensino Médio).",
+    step_4_error_inst: "Informe o nome da escola ou faculdade.",
+    step_4_error_start_year: "Informe um ano válido com 4 dígitos (ex: 2018).",
+    step_4_error_end_year: "Informe um ano válido com 4 dígitos (ex: 2022).",
+    step_4_error_chronology: "O ano de conclusão não pode ser anterior ao ano de início.",
+    step_4_missing_error: "Preencha pelo menos 1 formação acadêmica.",
+    step_5_skills_title: "Habilidades profissionais (clique para marcar):",
+    step_5_skills_custom_ph: "Digitar outra competência (ex: Redação, Negociação...)",
+    step_5_tools_title: "Sistemas, softwares e ferramentas:",
+    step_5_tools_custom_ph: "Digitar outro software (ex: Canva, Trello...)",
+    step_5_error_detail: "Selecione pelo menos uma competência profissional ou ferramenta para o seu currículo.",
+    step_5_missing_error: "Selecione pelo menos uma competência ou ferramenta.",
+    step_6_empty: "Nenhum curso adicionado ainda.",
+    step_6_add_first: "+ Adicionar meu primeiro curso",
+    step_6_course_num: "Curso",
+    step_6_name_label: "Nome do Curso",
+    step_6_name_ph: "ex: Excel do Básico ao Avançado, Atendimento ao Cliente...",
+    step_6_inst_label: "Instituição",
+    step_6_inst_ph: "ex: SENAC, Udemy, SEBRAE...",
+    step_6_year_label: "Ano",
+    step_6_hours_label: "Carga Horária (opcional)",
+    step_6_hours_ph: "ex: 40 horas",
+    step_6_error_detail: "Preencha o Nome e a Instituição de cada curso adicionado ou remova o item em branco.",
+    step_6_error_name: "Informe o nome do curso.",
+    step_6_error_inst: "Informe a instituição.",
+    step_6_error_year: "Informe um ano com 4 dígitos (ex: 2023).",
+    step_6_missing_error: "Revise os cursos adicionados.",
+    step_7_tag: "Diferencial Inteligente CURRÊ",
+    step_7_desc_label: "Descrição ou requisitos da vaga (Copie e cole do LinkedIn, Gupy, WhatsApp...)",
+    step_7_desc_ph: "Cole aqui o texto do anúncio da vaga (atividades, requisitos, diferenciais)...",
+    step_7_ethics_text: "Compromisso de Ética: A IA NÃO inventa competências ou empregos falsos. Ela apenas reorganiza e destaca suas informações reais com os termos que os recrutadores valorizam.",
+    step_7_analyzing_btn: "Analisando requisitos com IA...",
+    step_7_analyze_btn: "ANALISAR VAGA COM IA",
+    step_7_analysis_completed: "Análise de Vaga Concluída",
+    step_7_mapped_role: "Cargo Mapeado",
+    step_7_estimated_match: "Compatibilidade estimada",
+    step_7_skills_found: "✓ Competências encontradas no seu perfil:",
+    step_7_keywords_essential: "Palavras-chave essenciais da vaga:",
+    step_7_ai_tips_title: "💡 Dicas da IA para este processo seletivo:",
+    step_8_tag: "Tudo pronto para a mágica!",
+    step_8_edit_btn: "Editar",
+    step_8_btn_sub: "Geração inteligente rápida e profissional • 100% gratuita sem cadastro obrigatório.",
+    step_8_btn_sub_disabled: "Preencha todos os campos obrigatórios acima para habilitar a geração.",
+    step_8_items_count: "item(s)",
+    step_8_optional_provided: "Preenchido",
+    field_linkedin_ph: "ex: linkedin.com/in/seunome",
+    field_portfolio_ph: "ex: meutrabalho.com / portfolio",
+    // Slogan & Brand
+    brand_slogan: 'Corra atrás da vaga certa.',
+    footer_developed_by: 'Site desenvolvido por',
+    footer_tagline: 'Plataforma inteligente de currículos com IA otimizada para recrutadores e sistemas ATS.',
+    footer_terms: 'Termos & LGPD',
+    nav_create: 'Criar currículo',
+    nav_how_it_works: 'Como funciona',
+    nav_features: 'Recursos',
+    nav_saved_resume: 'Ver Currículo Salvo',
+    nav_login_cloud: 'Entrar / Nuvem',
+    nav_cta_create: 'Criar Agora',
+    nav_mobile_create: 'Criar',
+    nav_header: 'Navegação',
+    nav_smart_features: 'Recursos inteligentes',
+    nav_cloud_active: 'Nuvem Ativa',
+    nav_login_cloud_full: 'Entrar / Salvar na Nuvem',
+    nav_optional: 'Opcional',
+
+    // Modals Info
+    how_title: "Como funciona o CURRÊ?",
+    how_subtitle: "Corra atrás da vaga certa em apenas 3 passos simples",
+    how_step_1_title: "Preencha suas informações",
+    how_step_1_desc: "Informe seus dados de contato, formação e experiências. Não se preocupe em usar palavras difíceis — escreva com suas próprias palavras como era sua rotina.",
+    how_step_2_title: "Cole a vaga desejada (opcional)",
+    how_step_2_desc: "A IA analisa os requisitos e palavras-chave da vaga para destacar as suas experiências e qualificações reais mais compatíveis.",
+    how_step_3_title: "Receba seu currículo em PDF",
+    how_step_3_desc: "Pronto para envio! Em formato profissional aprovado por recrutadores e pronto para impressão ou envio por e-mail e WhatsApp.",
+    how_info_box: "A IA do CURRÊ nunca inventa experiências falsas. Apenas valoriza sua história real.",
+    how_btn_start: "CRIAR MEU CURRÍCULO AGORA",
+
+    feat_modal_title: "Recursos do CURRÊ",
+    feat_modal_subtitle: "Tecnologia desenhada para seu crescimento profissional",
+    feat_item_1_title: "Refinamento de Redação",
+    feat_item_1_desc: "Converte frases simples em marcadores de ação de alto impacto reconhecidos em seleções.",
+    feat_item_2_title: "Leitor de Vaga Inteligente",
+    feat_item_2_desc: "Extrai competências-chave da vaga e posiciona seu perfil com máxima relevância.",
+    feat_item_3_title: "Padrão Limpo ATS",
+    feat_item_3_desc: "Formatado para passar sem erros em robôs de triagem (Gupy, Kenoby, LinkedIn).",
+    feat_item_4_title: "Privacidade Total",
+    feat_item_4_desc: "Não pedimos documentos confidenciais como CPF ou RG. Seus dados são seus.",
+    feat_modal_btn_close: "Fechar",
+
+    // Hero
+    hero_badge: 'Inteligência Artificial Feita para Quem Precisa de Resultados',
+    hero_title_p1: 'Seu próximo emprego pode começar com um ',
+    hero_title_highlight: 'currículo melhor.',
+    hero_subtitle: 'Crie um currículo profissional com inteligência artificial e adapte sua apresentação para a vaga que você deseja.',
+    hero_cta_start: 'CRIAR MEU CURRÍCULO',
+    hero_cta_how: 'COMO FUNCIONA',
+    hero_trust_free: '100% gratuito',
+    hero_trust_no_signup: 'Sem cadastro obrigatório',
+    hero_trust_cloud: 'Salvar na Nuvem (Opcional)',
+    hero_saved_session: 'SESSÃO SALVA',
+    hero_saved_ready: 'Pronto para download ou edição',
+    hero_saved_open: 'Abrir Salvo',
+    hero_saved_new: 'Novo',
+
+    // Simulation
+    sim_title_1: '1. Informações básicas',
+    sim_badge_1: 'Preenchimento simples',
+    sim_title_2: '2. Experiência informal',
+    sim_badge_2: 'Linguagem própria',
+    sim_title_3: '3. Otimização com IA CURRÊ',
+    sim_badge_3: 'Padrão de recrutamento',
+    sim_title_4: '4. Alinhamento com a vaga',
+    sim_badge_4: 'Currículo pronto em PDF!',
+    sim_no_fake: 'Sem inventar experiências',
+    sim_try_now: 'Experimente agora →',
+
+    // Features
+    feat_1_title: 'Fácil como uma conversa',
+    feat_1_desc: 'Escreva suas tarefas cotidianas com suas próprias palavras. O CURRÊ transforma tudo em realizações de alto impacto.',
+    feat_2_title: 'Alinhado à Vaga de Emprego',
+    feat_2_desc: 'Cole a descrição da oportunidade e o CURRÊ destaca as competências e palavras-chave mais buscadas pelos recrutadores.',
+    feat_3_title: 'Ético e 100% Confiável',
+    feat_3_desc: 'Garantia estrita de integridade: a IA nunca inventa empresas ou cargos falsos. Apenas valoriza o que você realmente fez.',
+
+    // Wizard Steps & Labels
+    wiz_back_home: 'Voltar ao início',
+    wiz_prev_step: 'Etapa anterior',
+    wiz_fill_sample: 'Preencher exemplo',
+    wiz_step_label: 'Etapa',
+    wiz_of_label: 'de',
+    step_1_title: 'Dados Pessoais',
+    step_2_title: 'Objetivo Profissional',
+    step_3_title: 'Experiência Profissional',
+    step_4_title: 'Formação Acadêmica',
+    step_5_title: 'Competências & Ferramentas',
+    step_6_title: 'Cursos & Certificações',
+    step_7_title: 'Alinhamento com a Vaga',
+    step_8_title: 'Revisão e Geração',
+
+    // Wizard Step 1
+    step_1_heading: 'Seus Dados de Contato',
+    step_1_sub: 'Informações que o recrutador usará para te chamar para a entrevista. Não pedimos CPF ou documentos.',
+    field_full_name: 'Nome Completo',
+    field_name_placeholder: 'ex: Maria Eduarda Ferreira',
+    field_name_error: 'Informe seu nome e sobrenome (mínimo 3 caracteres).',
+    label_required: 'Obrigatório',
+    label_optional: 'Opcional',
+    field_city_state: 'Cidade / Estado',
+    field_city_placeholder: 'ex: São Paulo, SP',
+    field_city_error: 'Informe sua cidade e estado (ex: São Paulo, SP).',
+    field_phone: 'Telefone / WhatsApp',
+    field_phone_format: 'Padrão: (11) 98765-4321',
+    field_phone_placeholder: '(11) 98765-4321',
+    field_phone_error: 'Informe um telefone ou WhatsApp completo no formato (xx) 9xxxx-xxxx.',
+    field_email: 'E-mail profissional',
+    field_email_placeholder: 'ex: seuemail@gmail.com',
+    field_email_error: 'Informe um endereço de e-mail válido.',
+    field_linkedin: 'LinkedIn (opcional)',
+    field_portfolio: 'Portfólio / Site (opcional)',
+    field_photo_toggle: 'Quero adicionar uma foto no currículo',
+    field_photo_change: 'Alterar foto',
+    field_photo_upload: 'Carregar imagem',
+
+    // Wizard Step 2
+    step_2_heading: 'Qual cargo você está buscando?',
+    step_2_sub: 'O objetivo profissional ajuda o recrutador a identificar imediatamente onde você quer atuar.',
+    step_2_role_label: 'Cargo Almejado',
+    step_2_role_placeholder: 'Exemplo: Analista Administrativo',
+    step_2_role_error: 'Informe o cargo almejado para direcionar seu currículo (ou escolha uma das sugestões abaixo).',
+    step_2_suggestions_label: 'Sugestões populares (clique para aplicar):',
+    step_2_goal_label: 'Objetivo profissional / Resumo pessoal (opcional)',
+    step_2_goal_placeholder: 'Ex: Busco uma vaga como Analista Administrativo para organizar fluxos de rotinas, faturamento e suporte a equipes, trazendo eficiência e comprometimento.',
+    step_2_ai_tip: 'Dica da IA: Se deixar em branco ou escrever com suas próprias palavras, nossa inteligência artificial criará automaticamente um resumo executivo persuasivo e elegante para você na etapa final.',
+
+    // Wizard Step 3
+    step_3_heading: 'Vamos contar sua experiência profissional',
+    step_3_sub: 'Adicione seus trabalhos anteriores ou atual. A IA organizará cronologicamente.',
+    step_3_add_btn: '+ ADICIONAR EXPERIÊNCIA',
+    step_3_no_exp_btn: 'Não tenho experiência formal (Primeiro Emprego)',
+    step_3_no_exp_checkbox: 'Em busca do primeiro emprego / Sem experiência formal anterior',
+    step_3_no_exp_desc: 'Marque esta opção se você for estudante, jovem aprendiz ou estiver ingressando no mercado de trabalho agora.',
+    step_3_no_exp_active_title: 'Perfil Sem Experiência Formal Selecionado',
+    step_3_no_exp_active_desc: 'Perfeito! O CURRÊ irá estruturar seu currículo com foco estratégico na sua Formação Acadêmica, Cursos & Certificações e Habilidades Práticas, destacando o seu potencial para os recrutadores.',
+    step_3_no_exp_switch_back: 'Prefiro preencher minhas experiências profissionais',
+    step_3_exp_num: 'Experiência',
+    step_3_remove_exp: 'Remover',
+    step_3_field_company: 'Empresa',
+    step_3_field_company_placeholder: 'ex: Distribuidora Silva, Padaria Central, Escritório Modelo',
+    step_3_field_role: 'Cargo',
+    step_3_field_role_placeholder: 'ex: Assistente Administrativo, Auxiliar de Loja',
+    step_3_field_start: 'Início (Mês/Ano)',
+    step_3_field_end: 'Término (Mês/Ano)',
+    step_3_field_current: 'Trabalho atualmente nesta empresa',
+    step_3_field_activities: 'Atividades e responsabilidades do dia a dia',
+    step_3_field_activities_tip: 'Dica: escreva com suas próprias palavras o que fazia. A IA polirá com linguagem executiva.',
+    step_3_field_results: 'Resultados, conquistas ou melhorias alcançadas (Opcional)',
+    step_3_field_results_tip: 'Dica: mencione números, metas batidas ou processos otimizados (ex: reduziu tempo em 30%).',
+
+    // Wizard Step 4
+    step_4_heading: 'Formação Escolar ou Acadêmica',
+    step_4_sub: 'Indique sua escolaridade: ensino fundamental, médio, técnico, graduação ou pós-graduação.',
+    step_4_add_btn: '+ ADICIONAR FORMAÇÃO',
+    step_4_error_min: 'Adicione pelo menos 1 nível de escolaridade ou formação acadêmica.',
+    step_4_field_course: 'Curso / Escolaridade',
+    step_4_field_institution: 'Instituição de Ensino',
+    step_4_field_start_year: 'Ano de Início',
+    step_4_field_end_year: 'Ano de Conclusão / Previsão',
+    step_4_field_status: 'Situação',
+    step_4_status_completed: 'Concluído',
+    step_4_status_in_progress: 'Em andamento',
+    step_4_status_interrupted: 'Interrompido',
+
+    // Wizard Step 5
+    step_5_heading: 'Competências e Ferramentas',
+    step_5_sub: 'Selecione as habilidades e ferramentas que você possui ou digite outras. Pelo menos uma é necessária.',
+    step_5_error: 'Selecione pelo menos uma competência profissional ou ferramenta para o seu currículo.',
+    step_5_label: 'Habilidades profissionais (clique para marcar):',
+    step_5_tools_label: 'Sistemas, softwares e ferramentas:',
+    step_5_custom_placeholder: 'Digitar outra competência (ex: Redação, Negociação...)',
+    step_5_tools_custom_placeholder: 'Digitar outro software (ex: Canva, Trello...)',
+    step_5_add_btn: 'Adicionar',
+
+    // Wizard Step 6
+    step_6_heading: 'Cursos e Certificações Extras',
+    step_6_sub: 'Cursos livres, workshops, idiomas ou certificados técnicos que enriquecem seu perfil.',
+    step_6_add_btn: '+ ADICIONAR CURSO',
+    step_6_empty_title: 'Nenhum curso adicionado ainda.',
+    step_6_empty_sub: 'Esta seção é opcional, mas ajuda a destacar seu interesse contínuo em aprender!',
+    step_6_empty_btn: '+ Adicionar meu primeiro curso',
+    step_6_field_name: 'Nome do Curso',
+    step_6_field_institution: 'Instituição',
+    step_6_field_year: 'Ano',
+    step_6_field_hours: 'Carga Horária (opcional)',
+
+    // Wizard Step 7
+    step_7_heading: 'Quer deixar seu currículo ainda mais alinhado à vaga?',
+    step_7_sub: 'Cole a descrição da vaga. A IA vai analisar os requisitos e ajudar a destacar as experiências e competências mais relevantes do seu perfil.',
+    step_7_badge: 'Diferencial Inteligente CURRÊ',
+    step_7_textarea_label: 'Descrição ou requisitos da vaga (Copie e cole do LinkedIn, Gupy, WhatsApp...)',
+    step_7_ethics_title: 'Compromisso de Ética e Verdade:',
+    step_7_ethics_desc: 'A IA NÃO inventa competências, experiências ou qualificações que você não possui. Ela apenas reorganiza e destaca suas informações reais com os termos que os recrutadores valorizam.',
+    step_7_btn_analyze: 'ANALISAR VAGA COM IA',
+    step_7_btn_analyzing: 'Analisando requisitos com IA...',
+    step_7_skip_hint: '(Se preferir, você pode pular esta etapa clicando em Próximo)',
+
+    // Wizard Step 8
+    step_8_badge: 'Tudo pronto para a mágica!',
+    step_8_heading: 'Confira suas informações',
+    step_8_sub: 'Você pode revisar cada seção abaixo antes de gerar seu currículo profissional com IA.',
+    step_8_warning_title: 'Atenção: Campos obrigatórios incompletos',
+    step_8_warning_desc: 'Para garantir que seu currículo passe nos filtros das empresas e tenha qualidade profissional, preencha os itens marcados como Pendente abaixo clicando em Editar.',
+    step_8_status_completed: 'Preenchido',
+    step_8_status_pending: 'Pendente (*)',
+    step_8_btn_edit: 'Editar',
+    step_8_btn_generate: '✨ GERAR MEU CURRÍCULO',
+    step_8_guarantee: 'Geração inteligente rápida e profissional • 100% gratuita sem cadastro obrigatório.',
+    step_8_pending_notice: 'Preencha todos os campos obrigatórios acima para habilitar a geração.',
+
+    // Wizard Bottom Nav
+    wiz_back: 'Voltar',
+    wiz_next: 'Próximo',
+    wiz_req_warning: 'Preencha os campos obrigatórios (*) para avançar',
+    wiz_generate_btn: 'GERAR MEU CURRÍCULO',
+    wiz_jump_review: 'Ir para Revisão (Etapa 8)',
+
+    // Resume sections
+    sec_summary: 'Resumo Profissional',
+    sec_experience: 'Experiência Profissional',
+    sec_education: 'Formação Acadêmica',
+    sec_skills: 'Competências & Habilidades',
+    sec_courses: 'Cursos & Certificações',
+    sec_contact: 'Contato',
+
+    // Template Labels
+    tmpl_summary: 'Resumo Profissional',
+    tmpl_experience: 'Experiência Profissional',
+    tmpl_skills: 'Competências & Tecnologias',
+    tmpl_skills_core: 'Principais Competências',
+    tmpl_skills_main: 'Competências Principais',
+    tmpl_tools: 'Sistemas, Softwares & Ferramentas',
+    tmpl_tools_soft: 'Ferramentas & Softwares',
+    tmpl_education: 'Formação Acadêmica',
+    tmpl_education_short: 'Formação',
+    tmpl_courses: 'Cursos & Certificações',
+    tmpl_courses_short: 'Cursos',
+    tmpl_certifications: 'Certificações',
+    tmpl_contact: 'Contato',
+    tmpl_contact_location: 'Localização:',
+    tmpl_present: 'Atual',
+    tmpl_status_completed: 'Concluído',
+    tmpl_status_in_progress: 'Em andamento',
+    tmpl_status_interrupted: 'Interrompido',
+    tmpl_qualifications: 'Resumo de Qualificações',
+    tmpl_qualifications_synthesis: 'Síntese de Qualificações',
+    tmpl_profile: 'Perfil Profissional',
+    tmpl_trajectory: 'Trajetória Profissional',
+    tmpl_exec_skills: 'Competências Diretivas & Ferramentas',
+    tmpl_exec_mgmt: 'Gestão & Liderança',
+    tmpl_exec_systems: 'Sistemas & Tecnologias',
+    tmpl_exec_cert: 'Certificações & Aperfeiçoamento Profissional',
+    tmpl_skills_tech_alt: 'Competências & Habilidades Técnicas',
+    tmpl_skills_label: 'Competências:',
+    tmpl_tools_label: 'Ferramentas & Tecnologias:',
+    tmpl_default_bullet: 'Condução e execução das responsabilidades operacionais e estratégicas da função.',
+    tmpl_default_bullet_modern: 'Atuação direcionada ao atingimento de metas operacionais e estratégicas.',
+    tmpl_default_bullet_exec: 'Liderança de iniciativas estratégicas e gestão contínua de processos organizacionais.',
+    tmpl_default_bullet_ats: 'Execução de rotinas operacionais e projetos corporativos da área.',
+    tmpl_default_bullet_corp: 'Responsável pela condução de processos técnicos e atendimento a requisitos organizacionais.',
+    step_7_err_paste_job: 'Cole a descrição da vaga no campo acima para analisar.',
+    step_7_err_fail: 'Não foi possível analisar a vaga agora. Você pode continuar mesmo assim.',
+    field_photo_tip: 'Dica: Use uma foto nítida e com boa iluminação.',
+
+    // Preview
+    prev_download_pdf: 'Baixar Currículo PDF',
+    prev_edit_info: 'Editar Informações',
+    prev_choose_template: 'Escolha o Modelo Visual',
+    prev_model_modern: 'Moderno Clean',
+    prev_model_classic: 'Executivo Clássico',
+    prev_model_sidebar: 'Lateral Estruturado',
+    prev_btn_adapt: 'Adaptar para vaga',
+    prev_btn_edit: 'Editar',
+    prev_btn_regenerate: 'Gerar novamente',
+    prev_btn_save: 'Salvar',
+    prev_btn_saved: 'Salvo!',
+    prev_btn_download: 'BAIXAR CURRÍCULO EM PDF',
+    prev_btn_downloading: 'GERANDO PDF VETORIAL NO SERVIDOR...',
+    prev_cloud_connected: 'Conectado como',
+    prev_cloud_prompt_title: 'Deseja acessar este currículo em outro celular ou computador?',
+    prev_cloud_prompt_desc: 'Seu currículo já está pronto e salvo no navegador atual. Se preferir deixá-lo guardado na nuvem para não perder, faça login gratuito (com 1 clique).',
+    prev_cloud_btn: 'Salvar na Nuvem (Login)',
+    prev_match_title: 'Compatibilidade com esta vaga',
+    prev_match_badge: 'Recurso Inteligente • Análise de Vaga',
+    prev_match_score_sub: 'Aderência ao perfil',
+    prev_match_found_skills: 'Competências Encontradas',
+    prev_match_relevant_exp: 'Experiências Relevantes',
+    prev_match_improvements: 'Pontos de Melhoria',
+    prev_match_disclaimer: '* A análise de compatibilidade é um diagnóstico técnico comparativo e não garante contratação nem aprovação em processos seletivos.',
+
+    // Preview extra & badges
+    prev_ready_badge: 'Currículo Pronto',
+    prev_ai_optimized: '• Otimizado com IA',
+    prev_default_title: 'Seu Currículo',
+    prev_cloud_synced_badge: 'Nuvem Sincronizada',
+    prev_cloud_synced_desc: 'Este currículo está salvo na sua nuvem e protegido para acesso em qualquer dispositivo.',
+    prev_cloud_synced_tag: 'Salvo na Nuvem',
+    prev_cloud_opt_badge: 'Opcional • Salvar na Nuvem',
+    prev_tmpl_style_title: 'Escolha o Estilo do Currículo:',
+    prev_tip_download: 'Dica: O download do PDF A4 em alta definição começará diretamente sem abrir janela de impressão.',
+    prev_print_pdf_hint: 'Download direto: O PDF vetorial em alta definição será gerado no servidor e salvo diretamente no seu dispositivo.',
+
+    // Templates Ribbon
+    tmpl_modern_badge: 'Tech & Inovação',
+    tmpl_modern_desc: 'Design limpo e objetivo, sem ruído visual. Padrão para startups e big techs.',
+    tmpl_executive_badge: 'Liderança & Finanças',
+    tmpl_executive_desc: 'Diagramação nobre com tipografia serifada e autoridade executiva.',
+    tmpl_ats_badge: 'Triagem Online & ATS',
+    tmpl_ats_desc: 'Coluna única 100% linear, otimizada para robôs de recrutamento e portais.',
+    tmpl_impact_badge: 'Vendas & Produto',
+    tmpl_impact_desc: 'Painel lateral estruturado com alto contraste e presença visual memorável.',
+    tmpl_corporate_badge: 'Bancos & Multinacionais',
+    tmpl_corporate_desc: 'Grid matemático minimalista para grandes indústrias e governança global.',
+    tmpl_minimalist_badge: 'Primeiro Emprego & Estágio',
+    tmpl_minimalist_desc: 'Coluna lateral leve em tons neutros, ideal para pouco tempo de experiência.',
+    tmpl_creative_badge: 'Design & Moda',
+    tmpl_creative_desc: 'Cabeçalho com faixa colorida e tipografia expressiva para perfis criativos.',
+    tmpl_elegant_badge: 'Diretoria & Jurídico',
+    tmpl_elegant_desc: 'Serifada com filetes dourados, sofisticação clássica discreta.',
+    tmpl_tech_badge: 'Engenharia & Dados',
+    tmpl_tech_badge_short: 'Tech',
+    tmpl_tech_desc: 'Linha do tempo vertical que conta sua carreira cronologicamente.',
+    tmpl_intl_badge: 'Exterior & Multinacionais',
+    tmpl_intl_desc: 'Formato internacional limpo, sem foto e 100% compatível com ATS globais.',
+    // Job Analysis panel
+    job_analysis_badge: 'Recurso Inteligente • Análise de Vaga',
+    job_analysis_title: 'Compatibilidade com esta vaga',
+    job_analysis_match: 'Aderência ao perfil',
+    job_analysis_skills_found: 'Competências Encontradas',
+    job_analysis_exp_relevant: 'Experiências Relevantes',
+    job_analysis_improvements: 'Pontos de Melhoria',
+    job_analysis_disclaimer: '* A análise de compatibilidade é um diagnóstico técnico comparativo e não garante contratação nem aprovação em processos seletivos.',
+    tmpl_achievements: 'Conquistas & Resultados',
+    tmpl_skills_tools: 'Competências & Tecnologias',
+
+    // ATS Audit Bar
+    ats_audit_title: 'Auditoria de Leitura ATS:',
+    ats_audit_sections: 'seções estruturadas • Ordem determinística • 100% texto indexável',
+    ats_score_label: 'Score Estrutural:',
+    ats_verification_note: '(Verificação técnica de parsing)',
+
+    // Mobile bar
+    prev_mobile_creating: 'Criando PDF...',
+    prev_mobile_download: 'Baixar PDF',
+    prev_mobile_edit: 'Editar',
+
+    // Landing Hero Simulation
+    sim_header_brand: 'CURRÊ • Transformação em Tempo Real',
+    sim_header_ai_active: 'IA Ativa',
+    sim_detail_1: 'João Silva • Analista Administrativo',
+    sim_detail_2: '"Cuidava das notas e planilhas no setor..."',
+    sim_detail_3: '→ "Gerenciou rotinas fiscais e controle de faturamento via Excel"',
+    sim_detail_4: 'Requisitos correspondentes: 92% de compatibilidade',
+    sim_default_role: 'Profissional',
+
+    // Landing Hero Saved Resume
+    hero_saved_resume_title: 'Currículo Salvo',
+    hero_saved_cloud_tooltip: 'Deseja salvar na nuvem? Login gratuito opcional',
+
+    // Navbar Tooltips
+    nav_cloud_connected_title: 'Conta conectada na nuvem',
+    nav_cloud_active_title: 'Nuvem ativa',
+    nav_login_tooltip: 'Entrar (Opcional - para salvar na nuvem)',
+    nav_menu_aria: 'Abrir menu',
+
+    // Adapt Job Modal
+    adapt_modal_title: 'Adaptar para Outra Vaga',
+    adapt_current_role: 'Cargo atual do currículo:',
+    adapt_modal_desc: 'Cole a descrição ou requisitos da nova vaga que você deseja disputar. O CURRÊ vai reanalisar suas experiências reais e destacar os pontos mais compatíveis para esta nova oportunidade.',
+    adapt_job_label: 'Descrição da nova vaga',
+    adapt_job_placeholder: 'Cole aqui o texto da nova vaga (requisitos, atividades, conhecimentos desejados)...',
+    adapt_truth_guarantee: 'Suas experiências e dados cadastrados serão mantidos 100% verdadeiros.',
+    adapt_cancel: 'Cancelar',
+    adapt_submitting: 'Adaptando com IA...',
+    adapt_submit: 'Adaptar Currículo',
+
+    // Loading Overlay
+    loading_phase_1: 'Analisando seu perfil...',
+    loading_phase_2: 'Organizando suas experiências...',
+    loading_phase_3: 'Adaptando seu currículo...',
+    loading_phase_4: 'Finalizando...',
+    loading_brand_badge: 'CURRÊ • IA em Ação',
+    loading_description: 'Refinando suas palavras, estruturando cronologia e aplicando padrões de triagem profissional.',
+    loading_moment: 'Apenas alguns instantes...',
+  },
+
+  en: {
+    "step_1_ph_linkedin": "e.g. linkedin.com/in/yourname",
+    "step_1_ph_portfolio": "e.g. mywork.com / portfolio",
+    "step_3_err_company": "Enter the company name.",
+    "step_3_err_role": "Enter your job title.",
+    "step_3_pattern_hint": "Format: mm/yyyy",
+    "step_3_err_start_incomplete": "Incomplete date. Format mm/yyyy (e.g. 03/2020).",
+    "step_3_err_start_empty": "Enter the start date (mm/yyyy).",
+    "step_3_err_end_incomplete": "Incomplete date. Format mm/yyyy (e.g. 11/2023).",
+    "step_3_err_end_empty": "Enter the end date (or check \"Currently working here\" below).",
+    "step_3_err_end_before_start": "End date cannot be earlier than start date.",
+    "step_3_err_activities": "Briefly describe your main activities.",
+    "step_3_err_add_one": "Add at least 1 work experience or check the first job option above.",
+    "step_4_err_add_one": "Add at least 1 education entry or schooling level.",
+    "step_4_formation_prefix": "Education #",
+    "step_4_err_course": "Enter degree or school level (e.g. High School, B.S.).",
+    "step_4_err_institution": "Enter school or university name.",
+    "step_4_err_start_year": "Enter a valid 4-digit year (e.g. 2018).",
+    "step_4_err_end_year": "Enter a valid 4-digit year (e.g. 2022).",
+    "step_4_err_end_before_start": "Graduation year cannot be earlier than start year.",
+    "step_5_err_select_one": "Select at least one professional skill or tool for your resume.",
+    "step_6_err_fill_all": "Fill Course and Institution for each item or remove blank entries.",
+    "step_6_course_prefix": "Course #",
+    "step_6_err_course_name": "Enter course name.",
+    "step_6_err_institution": "Enter institution name.",
+    "step_6_err_year": "Enter a 4-digit year (e.g. 2023).",
+    "step_7_matched_skills": "✓ Skills found in your profile:",
+    "step_7_essential_keywords": "Essential keywords from the job:",
+    "step_7_ai_tips": "💡 AI tips for this selection process:",
+    "step_8_warning_incomplete_title": "Notice: Incomplete mandatory fields",
+    "step_8_warning_incomplete_desc": "To ensure your resume passes screening filters and maintains high quality, fill the items marked as Pending below by clicking Edit.",
+    step_2_missing_error: "Please specify your target job title (step 2).",
+    step_3_no_exp_title: "Looking for first job / No prior formal work experience",
+    step_3_no_exp_sub: "Check this option if you are a student, recent graduate, or just entering the workforce.",
+    step_3_no_exp_alert_title: "No Formal Experience Profile Selected",
+    step_3_no_exp_alert_desc: "Great! CURRÊ will strategically structure your resume around Education, Skills, and Certifications to highlight your high potential.",
+    step_3_no_exp_revert: "I prefer to enter my professional experience",
+    step_3_ai_tip: "Do not worry about complex jargon. Write simply what you did day-to-day, and our AI will polish it into high-impact executive achievements.",
+    step_3_company_number: "Experience #",
+    label_remove: "Remove",
+    label_present: "Present",
+    btn_add: "Add",
+    step_3_company_label: "Company Name",
+    step_3_company_placeholder: "e.g. Apex Logistics, Metro Retail, Central Office",
+    step_3_role_label: "Job Title",
+    step_3_role_placeholder: "e.g. Administrative Assistant, Sales Associate",
+    step_3_start_label: "Start Date",
+    step_3_end_label: "End Date",
+    step_3_pattern_mmyyyy: "Format: mm/yyyy",
+    step_3_current_job: "I currently work here",
+    step_3_activities_label: "Day-to-day duties and responsibilities",
+    step_3_activities_placeholder: "e.g. Answered customer calls, organized inventory, audited invoices, and updated spreadsheets...",
+    step_3_results_label: "Key achievements or measurable improvements (Optional)",
+    step_3_results_placeholder: "e.g. Reduced invoice audit time by 30% after streamlining Excel workflows...",
+    step_3_error_company: "Please enter the company name.",
+    step_3_error_role: "Please enter your job title.",
+    step_3_error_start_date: "Enter start date (mm/yyyy).",
+    step_3_error_end_date: "Enter end date (or check currently working here).",
+    step_3_error_chronology: "End date cannot be earlier than start date.",
+    step_3_error_activities: "Briefly describe your duties and responsibilities.",
+    step_3_missing_error: "Fill in your experience or select first job.",
+    step_4_course_label: "Degree / Program of Study",
+    step_4_course_ph: "e.g. High School Diploma, B.S. in Business Administration...",
+    step_4_inst_label: "School / College / University",
+    step_4_inst_ph: "e.g. City College of New York, State University...",
+    step_4_start_year: "Start Year",
+    step_4_end_year: "Graduation / Expected Year",
+    step_4_status_label: "Status",
+    step_4_formation_num: "Education",
+    step_4_error_min_detail: "Add at least one educational degree or schooling level.",
+    step_4_error_course: "Please enter your degree or course of study.",
+    step_4_error_inst: "Please enter the school or institution name.",
+    step_4_error_start_year: "Enter a valid 4-digit year (e.g. 2018).",
+    step_4_error_end_year: "Enter a valid 4-digit year (e.g. 2022).",
+    step_4_error_chronology: "Graduation year cannot be earlier than start year.",
+    step_4_missing_error: "Please complete at least 1 education entry.",
+    step_5_skills_title: "Professional skills (click to select):",
+    step_5_skills_custom_ph: "Type another skill (e.g. Copywriting, Negotiation...)",
+    step_5_tools_title: "Software, tools, and systems:",
+    step_5_tools_custom_ph: "Type another tool (e.g. Canva, Trello, Salesforce...)",
+    step_5_error_detail: "Please select at least one professional skill or tool for your resume.",
+    step_5_missing_error: "Select at least one skill or tool.",
+    step_6_empty: "No additional certifications added yet.",
+    step_6_add_first: "+ Add my first certification",
+    step_6_course_num: "Course",
+    step_6_name_label: "Course / Certificate Name",
+    step_6_name_ph: "e.g. Excel from Beginner to Advanced, Customer Service...",
+    step_6_inst_label: "Issuing Organization",
+    step_6_inst_ph: "e.g. Coursera, Udemy, Local College...",
+    step_6_year_label: "Year",
+    step_6_hours_label: "Total Hours (optional)",
+    step_6_hours_ph: "e.g. 40 hours",
+    step_6_error_detail: "Fill in course name and institution for all added items.",
+    step_6_error_name: "Please enter the course name.",
+    step_6_error_inst: "Please enter the issuing institution.",
+    step_6_error_year: "Enter a 4-digit year (e.g. 2023).",
+    step_6_missing_error: "Please review your added certifications.",
+    step_7_tag: "CURRÊ Smart Advantage",
+    step_7_desc_label: "Job description or requirements (Paste from LinkedIn, Indeed...)",
+    step_7_desc_ph: "Paste the job posting text here (responsibilities, required skills, bonus points)...",
+    step_7_ethics_text: "Ethical Guarantee: The AI NEVER invents fake skills or jobs. It accurately aligns your genuine experience with recruiter-preferred terminology.",
+    step_7_analyzing_btn: "Analyzing job posting with AI...",
+    step_7_analyze_btn: "ANALYZE JOB WITH AI",
+    step_7_analysis_completed: "Job Analysis Completed",
+    step_7_mapped_role: "Target Role Mapped",
+    step_7_estimated_match: "Estimated Match",
+    step_7_skills_found: "✓ Matching skills found in your profile:",
+    step_7_keywords_essential: "Essential job keywords:",
+    step_7_ai_tips_title: "💡 AI Recommendations for this application:",
+    step_8_tag: "Ready for AI Generation!",
+    step_8_edit_btn: "Edit",
+    step_8_btn_sub: "Fast, executive-grade AI resume generation • 100% free with no mandatory sign-up.",
+    step_8_btn_sub_disabled: "Complete all required fields above to enable resume generation.",
+    step_8_items_count: "item(s)",
+    step_8_optional_provided: "Provided",
+    field_linkedin_ph: "e.g. linkedin.com/in/yourprofile",
+    field_portfolio_ph: "e.g. mysite.com / portfolio",
+    // Slogan & Brand
+    brand_slogan: 'Run after the right job.',
+    footer_developed_by: 'Site developed by',
+    footer_tagline: 'Intelligent resume platform with AI optimized for recruiters and ATS systems.',
+    footer_terms: 'Terms & Privacy',
+    nav_create: 'Build resume',
+    nav_how_it_works: 'How it works',
+    nav_features: 'Features',
+    nav_saved_resume: 'View Saved Resume',
+    nav_login_cloud: 'Sign in / Cloud',
+    nav_cta_create: 'Create Now',
+    nav_mobile_create: 'Create',
+    nav_header: 'Navigation',
+    nav_smart_features: 'Smart features',
+    nav_cloud_active: 'Active Cloud',
+    nav_login_cloud_full: 'Sign in / Save to Cloud',
+    nav_optional: 'Optional',
+
+    // Modals Info
+    how_title: "How CURRÊ works?",
+    how_subtitle: "Chase the right job in just 3 simple steps",
+    how_step_1_title: "Fill in your information",
+    how_step_1_desc: "Enter your contact details, education, and experience. Don't worry about using difficult words — write in your own words what your routine was like.",
+    how_step_2_title: "Paste the desired job (optional)",
+    how_step_2_desc: "The AI analyzes the requirements and keywords of the job post to highlight your most compatible real experiences and qualifications.",
+    how_step_3_title: "Get your resume in PDF",
+    how_step_3_desc: "Ready to send! In a professional format approved by recruiters and ready for printing or sending via email and WhatsApp.",
+    how_info_box: "CURRÊ's AI never invents false experiences. It only highlights your real story.",
+    how_btn_start: "CREATE MY RESUME NOW",
+
+    feat_modal_title: "CURRÊ Features",
+    feat_modal_subtitle: "Technology designed for your professional growth",
+    feat_item_1_title: "Writing Refinement",
+    feat_item_1_desc: "Converts simple sentences into high-impact action bullet points recognized in job selections.",
+    feat_item_2_title: "Smart Job Reader",
+    feat_item_2_desc: "Extracts key skills from the job post and positions your profile with maximum relevance.",
+    feat_item_3_title: "Clean ATS Format",
+    feat_item_3_desc: "Formatted to pass without errors through sorting robots (such as Gupy, Kenoby, LinkedIn).",
+    feat_item_4_title: "Total Privacy",
+    feat_item_4_desc: "We do not request confidential documents such as SSN, ID, or tax numbers. Your data belongs to you.",
+    feat_modal_btn_close: "Close",
+
+    // Hero
+    hero_badge: 'Artificial Intelligence Built for Those Who Need Results',
+    hero_title_p1: 'Your next job starts with a ',
+    hero_title_highlight: 'better resume.',
+    hero_subtitle: 'Create a professional AI-optimized resume and tailor your qualifications to the job you want to land.',
+    hero_cta_start: 'BUILD MY RESUME',
+    hero_cta_how: 'HOW IT WORKS',
+    hero_trust_free: '100% Free',
+    hero_trust_no_signup: 'No sign-up required',
+    hero_trust_cloud: 'Cloud Save (Optional)',
+    hero_saved_session: 'SAVED SESSION',
+    hero_saved_ready: 'Ready for download or editing',
+    hero_saved_open: 'Open Saved',
+    hero_saved_new: 'New',
+
+    // Simulation
+    sim_title_1: '1. Basic Information',
+    sim_badge_1: 'Simple form',
+    sim_title_2: '2. Informal Experience',
+    sim_badge_2: 'Your own words',
+    sim_title_3: '3. CURRÊ AI Optimization',
+    sim_badge_3: 'Recruiter standard',
+    sim_title_4: '4. Job Alignment',
+    sim_badge_4: 'PDF ready to export!',
+    sim_no_fake: 'Zero fabricated experience',
+    sim_try_now: 'Try it now →',
+
+    // Features
+    feat_1_title: 'Simple as a conversation',
+    feat_1_desc: 'Write down your daily tasks in plain words. CURRÊ transforms them into high-impact achievement bullet points.',
+    feat_2_title: 'Targeted to Job Descriptions',
+    feat_2_desc: 'Paste the opportunity details and CURRÊ highlights the exact skills and keywords recruiters look for.',
+    feat_3_title: 'Ethical and 100% Reliable',
+    feat_3_desc: 'Strict integrity guarantee: AI never fabricates fake companies or titles. It only elevates what you genuinely accomplished.',
+
+    // Wizard Steps & Labels
+    wiz_back_home: 'Back to home',
+    wiz_prev_step: 'Previous step',
+    wiz_fill_sample: 'Fill sample data',
+    wiz_step_label: 'Step',
+    wiz_of_label: 'of',
+    step_1_title: 'Personal Info',
+    step_2_title: 'Target Job',
+    step_3_title: 'Work Experience',
+    step_4_title: 'Education',
+    step_5_title: 'Skills & Tools',
+    step_6_title: 'Courses & Certifications',
+    step_7_title: 'Job Target Alignment',
+    step_8_title: 'Review & Generate',
+
+    // Wizard Step 1
+    step_1_heading: 'Your Contact Details',
+    step_1_sub: 'Information recruiters will use to contact you for an interview. We never ask for sensitive documents.',
+    field_full_name: 'Full Name',
+    field_name_placeholder: 'e.g., Emily Johnson',
+    field_name_error: 'Enter your full name (minimum 3 characters).',
+    label_required: 'Required',
+    label_optional: 'Optional',
+    field_city_state: 'City / State / Country',
+    field_city_placeholder: 'e.g., New York, NY',
+    field_city_error: 'Enter your city and state/country.',
+    field_phone: 'Phone / WhatsApp',
+    field_phone_format: 'Format: (555) 123-4567 or +1 (555) 123-4567',
+    field_phone_placeholder: '(555) 123-4567',
+    field_phone_error: 'Enter a valid phone number (e.g. (555) 123-4567).',
+    field_email: 'Professional Email',
+    field_email_placeholder: 'e.g., yourname@email.com',
+    field_email_error: 'Enter a valid email address.',
+    field_linkedin: 'LinkedIn (optional)',
+    field_portfolio: 'Portfolio / Website (optional)',
+    field_photo_toggle: 'Add a photo to the resume',
+    field_photo_change: 'Change photo',
+    field_photo_upload: 'Upload photo',
+
+    // Wizard Step 2
+    step_2_heading: 'What position are you seeking?',
+    step_2_sub: 'Your career objective helps recruiters instantly know where you want to work.',
+    step_2_role_label: 'Target Job Title',
+    step_2_role_placeholder: 'e.g., Administrative Analyst',
+    step_2_role_error: 'Enter your target job title (or choose one of the suggestions below).',
+    step_2_suggestions_label: 'Popular suggestions (click to apply):',
+    step_2_goal_label: 'Career objective / Personal summary (optional)',
+    step_2_goal_placeholder: 'e.g., Seeking a role as Administrative Analyst to organize workflows, billing, and team support, bringing measurable efficiency and dedication.',
+    step_2_ai_tip: 'AI Tip: If left blank or written in your own words, our AI will craft a polished, persuasive executive summary for you in the final step.',
+
+    // Wizard Step 3
+    step_3_heading: 'Let\'s detail your work experience',
+    step_3_sub: 'Add your past or current positions. AI will organize them chronologically.',
+    step_3_add_btn: '+ ADD EXPERIENCE',
+    step_3_no_exp_btn: 'I have no formal experience (First Job)',
+    step_3_no_exp_checkbox: 'Seeking first job / No prior formal work experience',
+    step_3_no_exp_desc: 'Check this option if you are a student, apprentice, or newly entering the workforce.',
+    step_3_no_exp_active_title: 'No Formal Experience Profile Selected',
+    step_3_no_exp_active_desc: 'Great! CURRÊ will strategically structure your resume around your Education, Certifications, and Practical Skills to showcase your high potential.',
+    step_3_no_exp_switch_back: 'I prefer to enter work experiences',
+    step_3_exp_num: 'Experience',
+    step_3_remove_exp: 'Remove',
+    step_3_field_company: 'Company',
+    step_3_field_company_placeholder: 'e.g., Apex Logistics, Retail Store, Central Office',
+    step_3_field_role: 'Job Title',
+    step_3_field_role_placeholder: 'e.g., Administrative Assistant, Office Clerk',
+    step_3_field_start: 'Start Date (MM/YYYY)',
+    step_3_field_end: 'End Date (MM/YYYY)',
+    step_3_field_current: 'Currently working in this role',
+    step_3_field_activities: 'Daily responsibilities and activities',
+    step_3_field_activities_tip: 'Tip: Describe in your own words what you did. AI will refine it into professional action verbs.',
+    step_3_field_results: 'Key results, achievements, or improvements (Optional)',
+    step_3_field_results_tip: 'Tip: Mention numbers, targets reached, or time saved (e.g., cut turnaround time by 30%).',
+
+    // Wizard Step 4
+    step_4_heading: 'Your Educational Background',
+    step_4_sub: 'Indicate your highest degree: high school, technical degree, college, or graduate studies.',
+    step_4_add_btn: '+ ADD EDUCATION',
+    step_4_error_min: 'Please add at least 1 degree or education level.',
+    step_4_field_course: 'Degree / Field of Study',
+    step_4_field_institution: 'School / Institution',
+    step_4_field_start_year: 'Start Year',
+    step_4_field_end_year: 'Graduation / Expected Year',
+    step_4_field_status: 'Status',
+    step_4_status_completed: 'Completed',
+    step_4_status_in_progress: 'In progress',
+    step_4_status_interrupted: 'Interrupted',
+
+    // Wizard Step 5
+    step_5_heading: 'Skills and Tools',
+    step_5_sub: 'Select or write the competencies and software you master to highlight in your resume.',
+    step_5_error: 'Select at least one professional skill or tool for your resume.',
+    step_5_label: 'Professional skills (click to select):',
+    step_5_tools_label: 'Systems, software and tools:',
+    step_5_custom_placeholder: 'Type another skill (e.g., Negotiation, Copywriting...)',
+    step_5_tools_custom_placeholder: 'Type another tool (e.g., Canva, Trello...)',
+    step_5_add_btn: 'Add',
+
+    // Wizard Step 6
+    step_6_heading: 'Extra Courses & Certifications',
+    step_6_sub: 'Workshops, languages, online courses, and certificates that strengthen your profile.',
+    step_6_add_btn: '+ ADD COURSE',
+    step_6_empty_title: 'No courses added yet.',
+    step_6_empty_sub: 'This section is optional, but highlights your drive for continuous learning!',
+    step_6_empty_btn: '+ Add my first course',
+    step_6_field_name: 'Course Name',
+    step_6_field_institution: 'Institution',
+    step_6_field_year: 'Year',
+    step_6_field_hours: 'Hours / Duration (optional)',
+
+    // Wizard Step 7
+    step_7_heading: 'Want to tailor your resume directly to the job?',
+    step_7_sub: 'Paste the job description here. Our AI will analyze the requirements and spotlight your most relevant strengths and keywords.',
+    step_7_badge: 'Smart AI Advantage',
+    step_7_textarea_label: 'Job description or requirements (Copy & paste from LinkedIn, job boards...)',
+    step_7_ethics_title: 'Ethics & Authenticity Guarantee:',
+    step_7_ethics_desc: 'The AI NEVER invents qualifications, experiences, or skills you don\'t possess. It simply re-articulates and emphasizes your real background using the exact terms recruiters look for.',
+    step_7_btn_analyze: 'ANALYZE JOB WITH AI',
+    step_7_btn_analyzing: 'Analyzing requirements with AI...',
+    step_7_skip_hint: '(If you prefer, you can skip this step by clicking Next)',
+
+    // Wizard Step 8
+    step_8_badge: 'All set for the magic!',
+    step_8_heading: 'Review your information',
+    step_8_sub: 'You can review each section below before generating your AI-optimized resume.',
+    step_8_warning_title: 'Attention: Required fields incomplete',
+    step_8_warning_desc: 'To ensure your resume passes screening filters and presents high professional quality, please complete items marked as Pending below by clicking Edit.',
+    step_8_status_completed: 'Completed',
+    step_8_status_pending: 'Pending (*)',
+    step_8_btn_edit: 'Edit',
+    step_8_btn_generate: '✨ GENERATE MY RESUME',
+    step_8_guarantee: 'Fast, professional intelligent generation • 100% free with no mandatory signup.',
+    step_8_pending_notice: 'Complete all required fields above to enable generation.',
+
+    // Wizard Bottom Nav
+    wiz_back: 'Back',
+    wiz_next: 'Next',
+    wiz_req_warning: 'Fill in all required fields (*) to proceed',
+    wiz_generate_btn: 'GENERATE MY RESUME',
+    wiz_jump_review: 'Go to Review (Step 8)',
+
+    // Resume sections
+    sec_summary: 'Professional Summary',
+    sec_experience: 'Work Experience',
+    sec_education: 'Education',
+    sec_skills: 'Skills & Competencies',
+    sec_courses: 'Courses & Certifications',
+    sec_contact: 'Contact',
+
+    // Template Labels
+    tmpl_summary: 'Professional Summary',
+    tmpl_experience: 'Work Experience',
+    tmpl_skills: 'Skills & Technologies',
+    tmpl_skills_core: 'Core Competencies',
+    tmpl_skills_main: 'Core Competencies',
+    tmpl_tools: 'Systems, Software & Tools',
+    tmpl_tools_soft: 'Tools & Software',
+    tmpl_education: 'Education',
+    tmpl_education_short: 'Education',
+    tmpl_courses: 'Courses & Certifications',
+    tmpl_courses_short: 'Courses',
+    tmpl_certifications: 'Certifications',
+    tmpl_contact: 'Contact',
+    tmpl_contact_location: 'Location:',
+    tmpl_present: 'Present',
+    tmpl_status_completed: 'Completed',
+    tmpl_status_in_progress: 'In progress',
+    tmpl_status_interrupted: 'Interrupted',
+    tmpl_qualifications: 'Qualifications Summary',
+    tmpl_qualifications_synthesis: 'Qualifications Summary',
+    tmpl_profile: 'Professional Profile',
+    tmpl_trajectory: 'Career History',
+    tmpl_exec_skills: 'Executive Skills & Tools',
+    tmpl_exec_mgmt: 'Management & Leadership',
+    tmpl_exec_systems: 'Systems & Technologies',
+    tmpl_exec_cert: 'Certifications & Professional Development',
+    tmpl_skills_tech_alt: 'Technical Skills & Competencies',
+    tmpl_skills_label: 'Skills:',
+    tmpl_tools_label: 'Tools & Technologies:',
+    tmpl_default_bullet: 'Executed operational duties and delivered strategic contributions in this role.',
+    tmpl_default_bullet_modern: 'Dedicated performance toward achieving operational and strategic milestones.',
+    tmpl_default_bullet_exec: 'Leadership of strategic initiatives and ongoing optimization of business processes.',
+    tmpl_default_bullet_ats: 'Execution of day-to-day operations and area corporate projects.',
+    tmpl_default_bullet_corp: 'Responsible for conducting technical procedures and delivering organizational goals.',
+    step_7_err_paste_job: 'Paste the job description in the field above to analyze.',
+    step_7_err_fail: 'Could not analyze the job right now. You can continue anyway.',
+    field_photo_tip: 'Tip: Use a clear photo with good lighting.',
+
+    // Preview
+    prev_download_pdf: 'Download Resume PDF',
+    prev_edit_info: 'Edit Information',
+    prev_choose_template: 'Choose Visual Template',
+    prev_model_modern: 'Clean Modern',
+    prev_model_classic: 'Classic Executive',
+    prev_model_sidebar: 'Structured Sidebar',
+    prev_btn_adapt: 'Tailor to Job',
+    prev_btn_edit: 'Edit',
+    prev_btn_regenerate: 'Regenerate',
+    prev_btn_save: 'Save',
+    prev_btn_saved: 'Saved!',
+    prev_btn_download: 'DOWNLOAD RESUME AS PDF',
+    prev_btn_downloading: 'GENERATING VECTOR PDF ON SERVER...',
+    prev_cloud_connected: 'Connected as',
+    prev_cloud_prompt_title: 'Want to access this resume on other devices?',
+    prev_cloud_prompt_desc: 'Your resume is ready and saved in this browser. To back it up securely in the cloud, sign in for free with 1 click.',
+    prev_cloud_btn: 'Save to Cloud (Sign in)',
+    prev_match_title: 'Compatibility with this job',
+    prev_match_badge: 'Smart Feature • Job Analysis',
+    prev_match_score_sub: 'Profile match',
+    prev_match_found_skills: 'Matching Skills Found',
+    prev_match_relevant_exp: 'Relevant Experience',
+    prev_match_improvements: 'Areas for Improvement',
+    prev_match_disclaimer: '* Compatibility analysis is an informational assessment and does not guarantee job hiring or interview calls.',
+
+    // Preview extra & badges
+    prev_ready_badge: 'Resume Ready',
+    prev_ai_optimized: '• AI-Optimized',
+    prev_default_title: 'Your Resume',
+    prev_cloud_synced_badge: 'Cloud Synchronized',
+    prev_cloud_synced_desc: 'This resume is saved in your cloud and protected for access on any device.',
+    prev_cloud_synced_tag: 'Saved in Cloud',
+    prev_cloud_opt_badge: 'Optional • Save to Cloud',
+    prev_tmpl_style_title: 'Choose Resume Style:',
+    prev_tip_download: 'Tip: High-definition vector A4 PDF will download directly without opening print dialog.',
+    prev_print_pdf_hint: 'Direct download: Vector PDF is generated on the server and saved directly to your device.',
+
+    // Templates Ribbon
+    tmpl_modern_badge: 'Tech & Innovation',
+    tmpl_modern_desc: 'Clean, focused design with zero visual clutter. Standard for tech and modern businesses.',
+    tmpl_executive_badge: 'Leadership & Finance',
+    tmpl_executive_desc: 'Refined layout with serif typography and executive presence.',
+    tmpl_ats_badge: 'Online ATS & Screening',
+    tmpl_ats_desc: '100% linear single-column layout, optimized for recruiter bots and HR portals.',
+    tmpl_impact_badge: 'Sales & Product',
+    tmpl_impact_desc: 'Structured high-contrast sidebar panel creating a memorable visual impression.',
+    tmpl_corporate_badge: 'Corporate & Finance',
+    tmpl_corporate_desc: 'Minimalist mathematical grid tailored for corporate enterprises and global institutions.',
+    tmpl_minimalist_badge: 'Entry Level & Internship',
+    tmpl_minimalist_desc: 'Light neutral sidebar layout, ideal for early-career professionals.',
+    tmpl_creative_badge: 'Design & Fashion',
+    tmpl_creative_desc: 'Colorful header band with expressive typography for creative profiles.',
+    tmpl_elegant_badge: 'Executive & Legal',
+    tmpl_elegant_desc: 'Serif layout with gold hairlines and discreet classic sophistication.',
+    tmpl_tech_badge: 'Engineering & Data',
+    tmpl_tech_desc: 'Vertical timeline that tells your career story chronologically.',
+    tmpl_intl_badge: 'Abroad & Multinationals',
+    tmpl_intl_desc: 'Clean international format, photo-free and 100% compatible with global ATS.',
+    // Job Analysis panel
+    job_analysis_badge: 'Smart Feature • Job Analysis',
+    job_analysis_title: 'Compatibility with this job',
+    job_analysis_match: 'Profile match',
+    job_analysis_skills_found: 'Matching Skills Found',
+    job_analysis_exp_relevant: 'Relevant Experience',
+    job_analysis_improvements: 'Areas for Improvement',
+    job_analysis_disclaimer: '* Compatibility analysis is an informational assessment and does not guarantee job hiring or interview calls.',
+    tmpl_achievements: 'Key Achievements & Impact',
+    tmpl_skills_tools: 'Skills & Technologies',
+
+    // ATS Audit Bar
+    ats_audit_title: 'ATS Parsing Audit:',
+    ats_audit_sections: 'structured sections • Deterministic order • 100% indexable text',
+    ats_score_label: 'Structural Score:',
+    ats_verification_note: '(Technical parsing verification)',
+
+    // Mobile bar
+    prev_mobile_creating: 'Creating PDF...',
+    prev_mobile_download: 'Download PDF',
+    prev_mobile_edit: 'Edit',
+
+    // Landing Hero Simulation
+    sim_header_brand: 'CURRÊ • Real-time Transformation',
+    sim_header_ai_active: 'Active AI',
+    sim_detail_1: 'John Doe • Operations Analyst',
+    sim_detail_2: '"Handled department invoices and spreadsheets..."',
+    sim_detail_3: '→ "Managed tax routines and billing operations via Excel"',
+    sim_detail_4: 'Matching requirements: 92% match',
+    sim_default_role: 'Professional',
+
+    // Landing Hero Saved Resume
+    hero_saved_resume_title: 'Saved Resume',
+    hero_saved_cloud_tooltip: 'Want to save to cloud? Optional free sign-in',
+
+    // Navbar Tooltips
+    nav_cloud_connected_title: 'Account connected to cloud',
+    nav_cloud_active_title: 'Cloud active',
+    nav_login_tooltip: 'Sign in (Optional - to save to cloud)',
+    nav_menu_aria: 'Open menu',
+
+    // Adapt Job Modal
+    adapt_modal_title: 'Tailor to Another Job',
+    adapt_current_role: 'Current resume role:',
+    adapt_modal_desc: 'Paste the description or requirements of the new job. CURRÊ will re-analyze your real experiences and highlight the strongest matches for this opportunity.',
+    adapt_job_label: 'New job description',
+    adapt_job_placeholder: 'Paste the new job text here (requirements, responsibilities, desired skills)...',
+    adapt_truth_guarantee: 'Your real experiences and recorded data remain 100% truthful.',
+    adapt_cancel: 'Cancel',
+    adapt_submitting: 'Tailoring with AI...',
+    adapt_submit: 'Tailor Resume',
+
+    // Loading Overlay
+    loading_phase_1: 'Analyzing your profile...',
+    loading_phase_2: 'Organizing your experiences...',
+    loading_phase_3: 'Tailoring your resume...',
+    loading_phase_4: 'Finalizing...',
+    loading_brand_badge: 'CURRÊ • AI in Action',
+    loading_description: 'Refining your words, structuring chronology, and applying professional recruitment standards.',
+    loading_moment: 'Just a few moments...',
+  },
+
+  es: {
+    "step_1_ph_linkedin": "ej: linkedin.com/in/tunombre",
+    "step_1_ph_portfolio": "ej: mitrabajo.com / portafolio",
+    "step_3_err_company": "Ingrese el nombre de la empresa.",
+    "step_3_err_role": "Ingrese el cargo ocupado.",
+    "step_3_pattern_hint": "Formato: mm/aaaa",
+    "step_3_err_start_incomplete": "Fecha incompleta. Formato mm/aaaa (ej: 03/2020).",
+    "step_3_err_start_empty": "Ingrese la fecha de inicio (mm/aaaa).",
+    "step_3_err_end_incomplete": "Fecha incompleta. Formato mm/aaaa (ej: 11/2023).",
+    "step_3_err_end_empty": "Ingrese la fecha de término (o marque abajo \"Trabajo actualmente aquí\").",
+    "step_3_err_end_before_start": "La fecha de fin no puede ser anterior a la fecha de inicio.",
+    "step_3_err_activities": "Describa brevemente las actividades que realizaba.",
+    "step_3_err_add_one": "Agregue al menos 1 experiencia profesional o marque la opción de primer empleo arriba.",
+    "step_4_err_add_one": "Agregue al menos 1 formación académica o nivel educativo.",
+    "step_4_formation_prefix": "Formación #",
+    "step_4_err_course": "Ingrese la carrera o nivel educativo (ej: Bachillerato).",
+    "step_4_err_institution": "Ingrese el nombre de la institución educativa.",
+    "step_4_err_start_year": "Ingrese un año válido de 4 dígitos (ej: 2018).",
+    "step_4_err_end_year": "Ingrese un año válido de 4 dígitos (ej: 2022).",
+    "step_4_err_end_before_start": "El año de graduación no puede ser anterior al de inicio.",
+    "step_5_err_select_one": "Seleccione al menos una competencia profesional o herramienta para su currículum.",
+    "step_6_err_fill_all": "Complete Nombre e Institución de cada curso o elimine los campos en blanco.",
+    "step_6_course_prefix": "Curso #",
+    "step_6_err_course_name": "Ingrese el nombre del curso.",
+    "step_6_err_institution": "Ingrese la institución.",
+    "step_6_err_year": "Ingrese un año de 4 dígitos (ej: 2023).",
+    "step_7_matched_skills": "✓ Competencias encontradas en su perfil:",
+    "step_7_essential_keywords": "Palabras clave esenciales de la vacante:",
+    "step_7_ai_tips": "💡 Consejos de la IA para este proceso de selección:",
+    "step_8_warning_incomplete_title": "Atención: Campos obligatorios incompletos",
+    "step_8_warning_incomplete_desc": "Para asegurar que su currículum pase los filtros de selección y mantenga calidad profesional, complete los elementos marcados como Pendiente haciendo clic en Editar.",
+    step_2_missing_error: "Indica el puesto que buscas (etapa 2).",
+    step_3_no_exp_title: "En busca de mi primer empleo / Sin experiencia formal previa",
+    step_3_no_exp_sub: "Marca esta opción si eres estudiante, recién graduado o estás iniciando en el mercado.",
+    step_3_no_exp_alert_title: "Perfil Sin Experiencia Formal Seleccionado",
+    step_3_no_exp_alert_desc: "¡Perfecto! CURRÊ estructurará tu currículum enfocándose en tu Formación Académica, Habilidades y Cursos para resaltar tu potencial.",
+    step_3_no_exp_revert: "Prefiero completar mis experiencias laborales",
+    step_3_ai_tip: "No te preocupes por usar palabras rebuscadas. Escribe de forma sencilla lo que hacías a diario y nuestra IA lo transformará en logros de alto impacto.",
+    step_3_company_number: "Experiencia #",
+    label_remove: "Eliminar",
+    label_present: "Presente",
+    btn_add: "Añadir",
+    step_3_company_label: "Nombre de la Empresa",
+    step_3_company_placeholder: "ej: Distribuidora Central, Tienda Modelo, Despacho Jurídico",
+    step_3_role_label: "Puesto / Cargo",
+    step_3_role_placeholder: "ej: Asistente Administrativo, Auxiliar de Tienda",
+    step_3_start_label: "Fecha de Inicio",
+    step_3_end_label: "Fecha de Fin",
+    step_3_pattern_mmyyyy: "Formato: mm/aaaa",
+    step_3_current_job: "Trabajo actualmente en este puesto",
+    step_3_activities_label: "Tareas y responsabilidades del día a día",
+    step_3_activities_placeholder: "ej: Atención al cliente, control de inventarios, facturación y archivo de documentos...",
+    step_3_results_label: "Logros, metas cumplidas o mejoras (Opcional)",
+    step_3_results_placeholder: "ej: Reduje el tiempo de revisión de facturas en un 30% estandarizando planillas...",
+    step_3_error_company: "Indica el nombre de la empresa.",
+    step_3_error_role: "Indica el puesto ocupado.",
+    step_3_error_start_date: "Indica la fecha de inicio (mm/aaaa).",
+    step_3_error_end_date: "Indica la fecha de fin (o marca puesto actual).",
+    step_3_error_chronology: "La fecha de fin no puede ser anterior a la de inicio.",
+    step_3_error_activities: "Describe brevemente las tareas desempeñadas.",
+    step_3_missing_error: "Completa tus experiencias o marca primer empleo.",
+    step_4_course_label: "Estudios / Carrera / Titulación",
+    step_4_course_ph: "ej: Bachillerato, Grado en Administración, Técnico en Logística...",
+    step_4_inst_label: "Institución Educativa / Escuela",
+    step_4_inst_ph: "ej: Instituto Cervantes, Universidad Complutense...",
+    step_4_start_year: "Año de Inicio",
+    step_4_end_year: "Año de Graduación / Previsto",
+    step_4_status_label: "Estado",
+    step_4_formation_num: "Educación",
+    step_4_error_min_detail: "Añade al menos un nivel educativo o formación académica.",
+    step_4_error_course: "Indica el curso o titulación.",
+    step_4_error_inst: "Indica el nombre del centro educativo.",
+    step_4_error_start_year: "Indica un año válido de 4 dígitos (ej: 2018).",
+    step_4_error_end_year: "Indica un año válido de 4 dígitos (ej: 2022).",
+    step_4_error_chronology: "El año de fin no puede ser anterior al de inicio.",
+    step_4_missing_error: "Completa al menos 1 formación académica.",
+    step_5_skills_title: "Habilidades profesionales (haz clic para marcar):",
+    step_5_skills_custom_ph: "Escribir otra habilidad (ej: Redacción, Negociación...)",
+    step_5_tools_title: "Sistemas, software y herramientas:",
+    step_5_tools_custom_ph: "Escribir otro software (ej: Canva, Trello, SAP...)",
+    step_5_error_detail: "Selecciona al menos una habilidad profesional o herramienta para tu currículum.",
+    step_5_missing_error: "Selecciona al menos una habilidad o herramienta.",
+    step_6_empty: "No has añadido cursos todavía.",
+    step_6_add_first: "+ Añadir mi primer curso",
+    step_6_course_num: "Curso",
+    step_6_name_label: "Nombre del Curso",
+    step_6_name_ph: "ej: Excel Avanzado, Atención al Cliente y Ventas...",
+    step_6_inst_label: "Institución",
+    step_6_inst_ph: "ej: Cámara de Comercio, Udemy, Coursera...",
+    step_6_year_label: "Año",
+    step_6_hours_label: "Horas lectivas (opcional)",
+    step_6_hours_ph: "ej: 40 horas",
+    step_6_error_detail: "Completa el nombre y la institución de cada curso añadido.",
+    step_6_error_name: "Indica el nombre del curso.",
+    step_6_error_inst: "Indica la institución educativa.",
+    step_6_error_year: "Indica un año con 4 dígitos (ej: 2023).",
+    step_6_missing_error: "Revisa los cursos añadidos.",
+    step_7_tag: "Diferencial Inteligente CURRÊ",
+    step_7_desc_label: "Descripción o requisitos de la vacante (Copia y pega de LinkedIn, InfoJobs...)",
+    step_7_desc_ph: "Pega aquí el texto del anuncio de empleo (requisitos, funciones, competencias)...",
+    step_7_ethics_text: "Compromiso Ético: La IA NO inventa empleos ni aptitudes falsas. Solo reorganiza y resalta tu experiencia real con términos que valoran los reclutadores.",
+    step_7_analyzing_btn: "Analizando requisitos con IA...",
+    step_7_analyze_btn: "ANALIZAR VACANTE CON IA",
+    step_7_analysis_completed: "Análisis de Vacante Completado",
+    step_7_mapped_role: "Puesto Identificado",
+    step_7_estimated_match: "Compatibilidad estimada",
+    step_7_skills_found: "✓ Habilidades encontradas en tu perfil:",
+    step_7_keywords_essential: "Palabras clave esenciales de la vacante:",
+    step_7_ai_tips_title: "💡 Consejos de la IA para esta postulación:",
+    step_8_tag: "¡Todo listo para la magia!",
+    step_8_edit_btn: "Editar",
+    step_8_btn_sub: "Generación inteligente y profesional con IA • 100% gratis sin registro obligatorio.",
+    step_8_btn_sub_disabled: "Completa todos los campos obligatorios arriba para habilitar la generación.",
+    step_8_items_count: "elemento(s)",
+    step_8_optional_provided: "Completado",
+    field_linkedin_ph: "ej: linkedin.com/in/tuperfil",
+    field_portfolio_ph: "ej: miweb.es / portafolio",
+    // Slogan & Brand
+    brand_slogan: 'Consigue el empleo ideal.',
+    footer_developed_by: 'Sitio desarrollado por',
+    footer_tagline: 'Plataforma inteligente de currículums con IA optimizada para reclutadores y sistemas ATS.',
+    footer_terms: 'Términos y Privacidad',
+    nav_create: 'Crear currículum',
+    nav_how_it_works: 'Cómo funciona',
+    nav_features: 'Funciones',
+    nav_saved_resume: 'Ver Currículum Guardado',
+    nav_login_cloud: 'Ingresar / Nube',
+    nav_cta_create: 'Crear Ahora',
+    nav_mobile_create: 'Crear',
+    nav_header: 'Navegación',
+    nav_smart_features: 'Recursos inteligentes',
+    nav_cloud_active: 'Nube Activa',
+    nav_login_cloud_full: 'Ingresar / Guardar en la Nube',
+    nav_optional: 'Opcional',
+
+    // Modals Info
+    how_title: "¿Cómo funciona CURRÊ?",
+    how_subtitle: "Persigue el puesto adecuado en solo 3 sencillos pasos",
+    how_step_1_title: "Completa tu información",
+    how_step_1_desc: "Introduce tus datos de contacto, educación y experiencias. No te preocupes por usar palabras difíciles: escribe con tus propias palabras cómo era tu rutina.",
+    how_step_2_title: "Pega la vacante deseada (opcional)",
+    how_step_2_desc: "La IA analiza los requisitos y las palabras clave de la oferta para destacar tus experiencias y cualificaciones reales más compatibles.",
+    how_step_3_title: "Recibe tu currículum en PDF",
+    how_step_3_desc: "¡Listo para enviar! En formato profesional aprobado por reclutadores y listo para imprimir o enviar por correo electrónico y WhatsApp.",
+    how_info_box: "La IA de CURRÊ nunca inventa experiencias falsas. Solo pone en valor tu historia real.",
+    how_btn_start: "CREAR MI CURRÍCULUM AHORA",
+
+    feat_modal_title: "Funcionalidades de CURRÊ",
+    feat_modal_subtitle: "Tecnología diseñada para tu crecimiento profesional",
+    feat_item_1_title: "Refinamiento de Redacción",
+    feat_item_1_desc: "Convierte frases simples en viñetas de acción de alto impacto reconocidas en los procesos de selección.",
+    feat_item_2_title: "Lector de Vacantes Inteligente",
+    feat_item_2_desc: "Extrae las competencias clave de la oferta y posiciona tu perfil con la máxima relevancia.",
+    feat_item_3_title: "Formato ATS Limpio",
+    feat_item_3_desc: "Formateado para superar sin errores los filtros de los sistemas de selección automáticos (Gupy, Kenoby, LinkedIn).",
+    feat_item_4_title: "Privacidad Total",
+    feat_item_4_desc: "No solicitamos documentos confidenciales como CPF o DNI. Tus datos son exclusivamente tuyos.",
+    feat_modal_btn_close: "Cerrar",
+
+    // Hero
+    hero_badge: 'Inteligencia Artificial Hecha para Quienes Buscan Resultados',
+    hero_title_p1: 'Tu próximo empleo puede empezar con un ',
+    hero_title_highlight: 'currículum mejor.',
+    hero_subtitle: 'Crea un currículum profesional con inteligencia artificial y adapta tu perfil al puesto que deseas.',
+    hero_cta_start: 'CREAR MI CURRÍCULUM',
+    hero_cta_how: 'CÓMO FUNCIONA',
+    hero_trust_free: '100% gratuito',
+    hero_trust_no_signup: 'Sin registro obligatorio',
+    hero_trust_cloud: 'Guardar en la Nube (Opcional)',
+    hero_saved_session: 'SESIÓN GUARDADA',
+    hero_saved_ready: 'Listo para descargar o editar',
+    hero_saved_open: 'Abrir Guardado',
+    hero_saved_new: 'Nuevo',
+
+    // Simulation
+    sim_title_1: '1. Información básica',
+    sim_badge_1: 'Llenado simple',
+    sim_title_2: '2. Experiencia informal',
+    sim_badge_2: 'Tus propias palabras',
+    sim_title_3: '3. Optimización IA CURRÊ',
+    sim_badge_3: 'Estándar de reclutamiento',
+    sim_title_4: '4. Alineación con la vacante',
+    sim_badge_4: '¡Currículum listo en PDF!',
+    sim_no_fake: 'Sin inventar experiencias',
+    sim_try_now: 'Probar ahora →',
+
+    // Features
+    feat_1_title: 'Fácil como una charla',
+    feat_1_desc: 'Escribe tus tareas diarias con tus palabras. CURRÊ las transforma en logros de alto impacto.',
+    feat_2_title: 'Alineado a la Oferta de Empleo',
+    feat_2_desc: 'Pega la descripción del puesto y CURRÊ resalta las habilidades y palabras clave que buscan los reclutadores.',
+    feat_3_title: 'Ético y 100% Confiable',
+    feat_3_desc: 'Garantía estricta de integridad: la IA jamás inventa empresas ni cargos falsos. Solo potencia lo que realmente hiciste.',
+
+    // Wizard Steps & Labels
+    wiz_back_home: 'Volver al inicio',
+    wiz_prev_step: 'Etapa anterior',
+    wiz_fill_sample: 'Llenar ejemplo',
+    wiz_step_label: 'Etapa',
+    wiz_of_label: 'de',
+    step_1_title: 'Datos Personales',
+    step_2_title: 'Objetivo Profesional',
+    step_3_title: 'Experiencia Laboral',
+    step_4_title: 'Educación',
+    step_5_title: 'Competencias y Herramientas',
+    step_6_title: 'Cursos y Certificaciones',
+    step_7_title: 'Alineación con la Oferta',
+    step_8_title: 'Revisión y Generación',
+
+    // Wizard Step 1
+    step_1_heading: 'Tus Datos de Contacto',
+    step_1_sub: 'Información que el reclutador usará para llamarte a la entrevista. No pedimos documentos confidenciales.',
+    field_full_name: 'Nombre Completo',
+    field_name_placeholder: 'ej: María Gómez Fernández',
+    field_name_error: 'Ingresa tu nombre y apellido (mínimo 3 caracteres).',
+    label_required: 'Obligatorio',
+    label_optional: 'Opcional',
+    field_city_state: 'Ciudad / Estado / País',
+    field_city_placeholder: 'ej: Madrid, España / Buenos Aires, Argentina',
+    field_city_error: 'Ingresa tu ciudad y país.',
+    field_phone: 'Teléfono / WhatsApp',
+    field_phone_format: 'Formato: 612 345 678 o +34 612 345 678',
+    field_phone_placeholder: '612 345 678',
+    field_phone_error: 'Introduce un número válido (ej: 612 345 678 o +34 612 345 678).',
+    field_email: 'Correo electrónico profesional',
+    field_email_placeholder: 'ej: tucorreo@gmail.com',
+    field_email_error: 'Ingresa un correo electrónico válido.',
+    field_linkedin: 'LinkedIn (opcional)',
+    field_portfolio: 'Portafolio / Web (opcional)',
+    field_photo_toggle: 'Incluir foto en el currículum',
+    field_photo_change: 'Cambiar foto',
+    field_photo_upload: 'Subir imagen',
+
+    // Wizard Step 2
+    step_2_heading: '¿Qué puesto estás buscando?',
+    step_2_sub: 'El objetivo profesional ayuda al reclutador a identificar de inmediato dónde deseas trabajar.',
+    step_2_role_label: 'Puesto Deseado',
+    step_2_role_placeholder: 'Ejemplo: Analista Administrativo',
+    step_2_role_error: 'Ingresa el puesto deseado para orientar tu currículum (o elige una sugerencia abajo).',
+    step_2_suggestions_label: 'Sugerencias populares (clic para aplicar):',
+    step_2_goal_label: 'Objetivo profesional / Resumen personal (opcional)',
+    step_2_goal_placeholder: 'Ej: Busco una oportunidad como Asistente Administrativo para optimizar procesos, facturación y soporte al equipo con método y compromiso.',
+    step_2_ai_tip: 'Consejo de la IA: Si lo dejas en blanco o escribes con palabras sencillas, nuestra IA redactará automáticamente un resumen ejecutivo profesional y persuasivo.',
+
+    // Wizard Step 3
+    step_3_heading: 'Vamos a detallar tu experiencia laboral',
+    step_3_sub: 'Añade tus empleos anteriores o actual. La IA los organizará cronológicamente.',
+    step_3_add_btn: '+ AÑADIR EXPERIENCIA',
+    step_3_no_exp_btn: 'No tengo experiencia formal (Primer Empleo)',
+    step_3_no_exp_checkbox: 'En busca de primer empleo / Sin experiencia laboral formal',
+    step_3_no_exp_desc: 'Marca esta opción si eres estudiante, aprendiz o estás ingresando al mercado laboral ahora.',
+    step_3_no_exp_active_title: 'Perfil Sin Experiencia Formal Seleccionado',
+    step_3_no_exp_active_desc: '¡Perfecto! CURRÊ estructurará tu currículum destacando tu Educación, Cursos y Habilidades para resaltar tu potencial ante los reclutadores.',
+    step_3_no_exp_switch_back: 'Prefiero ingresar mis experiencias laborales',
+    step_3_exp_num: 'Experiencia',
+    step_3_remove_exp: 'Eliminar',
+    step_3_field_company: 'Empresa',
+    step_3_field_company_placeholder: 'ej: Distribuidora Central, Comercio Local, Oficina Central',
+    step_3_field_role: 'Cargo o Puesto',
+    step_3_field_role_placeholder: 'ej: Asistente Administrativo, Auxiliar de Tienda',
+    step_3_field_start: 'Inicio (Mes/Año)',
+    step_3_field_end: 'Fin (Mes/Año)',
+    step_3_field_current: 'Trabajo actualmente en este puesto',
+    step_3_field_activities: 'Actividades y responsabilidades diarias',
+    step_3_field_activities_tip: 'Consejo: Escribe con tus propias palabras lo que hacías. La IA lo pulirá con verbos de acción y lenguaje ejecutivo.',
+    step_3_field_results: 'Logros, resultados o mejoras alcanzadas (Opcional)',
+    step_3_field_results_tip: 'Consejo: Menciona cifras o mejoras (ej: redujo el tiempo de trámite en un 30%).',
+
+    // Wizard Step 4
+    step_4_heading: 'Tu Formación Académica',
+    step_4_sub: 'Indica tu nivel de estudios: secundaria, técnico, universitario o posgrado.',
+    step_4_add_btn: '+ AÑADIR FORMACIÓN',
+    step_4_error_min: 'Añade al menos 1 nivel educativo o titulación.',
+    step_4_field_course: 'Carrera / Nivel educativo',
+    step_4_field_institution: 'Institución Educativa',
+    step_4_field_start_year: 'Año de Inicio',
+    step_4_field_end_year: 'Año de Graduación / Previsto',
+    step_4_field_status: 'Estado',
+    step_4_status_completed: 'Completado',
+    step_4_status_in_progress: 'En curso',
+    step_4_status_interrupted: 'Interrumpido',
+
+    // Wizard Step 5
+    step_5_heading: 'Competencias y Herramientas',
+    step_5_sub: 'Selecciona o escribe las habilidades y software que dominas para destacarlos. Al menos una es requerida.',
+    step_5_error: 'Selecciona al menos una habilidad profesional o herramienta para tu currículum.',
+    step_5_label: 'Habilidades profesionales (clic para seleccionar):',
+    step_5_tools_label: 'Sistemas, software y herramientas:',
+    step_5_custom_placeholder: 'Escribir otra habilidad (ej: Negociación, Redacción...)',
+    step_5_tools_custom_placeholder: 'Escribir otra herramienta (ej: Canva, Trello...)',
+    step_5_add_btn: 'Añadir',
+
+    // Wizard Step 6
+    step_6_heading: 'Cursos y Certificaciones Extras',
+    step_6_sub: 'Talleres, idiomas, cursos online o certificados técnicos que fortalecen tu perfil.',
+    step_6_add_btn: '+ AÑADIR CURSO',
+    step_6_empty_title: 'Ningún curso añadido aún.',
+    step_6_empty_sub: 'Esta sección es opcional, ¡pero destaca tus ganas de superación y aprendizaje!',
+    step_6_empty_btn: '+ Añadir mi primer curso',
+    step_6_field_name: 'Nombre del Curso',
+    step_6_field_institution: 'Institución',
+    step_6_field_year: 'Año',
+    step_6_field_hours: 'Carga Horaria (opcional)',
+
+    // Wizard Step 7
+    step_7_heading: '¿Quieres alinear tu currículum con la vacante?',
+    step_7_sub: 'Pega la descripción de la vacante. Nuestra IA adaptará las palabras clave para superar los filtros ATS.',
+    step_7_badge: 'Ventaja Inteligente CURRÊ',
+    step_7_textarea_label: 'Descripción o requisitos de la vacante (Copia y pega de LinkedIn, portales...)',
+    step_7_ethics_title: 'Compromiso Ético y de Verdad:',
+    step_7_ethics_desc: 'La IA NO inventa datos ni competencias que no poseas. Solo reorganiza tu información real con los términos que los reclutadores buscan.',
+    step_7_btn_analyze: 'ANALIZAR OFERTA CON IA',
+    step_7_btn_analyzing: 'Analizando requisitos con IA...',
+    step_7_skip_hint: '(Si lo prefieres, puedes omitir este paso haciendo clic en Siguiente)',
+
+    // Wizard Step 8
+    step_8_badge: '¡Todo listo para la magia!',
+    step_8_heading: 'Revisa tu información',
+    step_8_sub: 'Revisa cada sección antes de generar tu currículum optimizado con IA.',
+    step_8_warning_title: 'Atención: Campos obligatorios incompletos',
+    step_8_warning_desc: 'Para garantizar que tu currículum supere los filtros de selección, completa las secciones marcadas como Pendiente abajo haciendo clic en Editar.',
+    step_8_status_completed: 'Completado',
+    step_8_status_pending: 'Pendiente (*)',
+    step_8_btn_edit: 'Editar',
+    step_8_btn_generate: '✨ GENERAR MI CURRÍCULUM',
+    step_8_guarantee: 'Generación rápida, profesional e inteligente • 100% gratis sin registro obligatorio.',
+    step_8_pending_notice: 'Completa todos los campos obligatorios arriba para habilitar la generación.',
+
+    // Wizard Bottom Nav
+    wiz_back: 'Volver',
+    wiz_next: 'Siguiente',
+    wiz_req_warning: 'Completa los campos obligatorios (*) para continuar',
+    wiz_generate_btn: 'GENERAR MI CURRÍCULUM',
+    wiz_jump_review: 'Ir a Revisión (Etapa 8)',
+
+    // Resume sections
+    sec_summary: 'Resumen Profesional',
+    sec_experience: 'Experiencia Laboral',
+    sec_education: 'Educación',
+    sec_skills: 'Competencias y Habilidades',
+    sec_courses: 'Cursos y Certificaciones',
+    sec_contact: 'Contacto',
+
+    // Template Labels
+    tmpl_summary: 'Perfil Profesional',
+    tmpl_experience: 'Experiencia Laboral',
+    tmpl_skills: 'Competencias & Tecnologías',
+    tmpl_skills_core: 'Competencias Principales',
+    tmpl_skills_main: 'Competencias Principales',
+    tmpl_tools: 'Sistemas, Software & Herramientas',
+    tmpl_tools_soft: 'Herramientas & Software',
+    tmpl_education: 'Educación y Formación',
+    tmpl_education_short: 'Educación',
+    tmpl_courses: 'Cursos & Certificaciones',
+    tmpl_courses_short: 'Cursos',
+    tmpl_certifications: 'Certificaciones',
+    tmpl_contact: 'Contacto',
+    tmpl_contact_location: 'Ubicación:',
+    tmpl_present: 'Actual',
+    tmpl_status_completed: 'Completado',
+    tmpl_status_in_progress: 'En curso',
+    tmpl_status_interrupted: 'Interrumpido',
+    tmpl_qualifications: 'Resumen de Cualificaciones',
+    tmpl_qualifications_synthesis: 'Síntesis de Cualificaciones',
+    tmpl_profile: 'Perfil Profesional',
+    tmpl_trajectory: 'Trayectoria Profesional',
+    tmpl_exec_skills: 'Competencias Directivas & Herramientas',
+    tmpl_exec_mgmt: 'Gestión & Liderazgo',
+    tmpl_exec_systems: 'Sistemas & Tecnologías',
+    tmpl_exec_cert: 'Certificaciones & Perfeccionamiento Profesional',
+    tmpl_skills_tech_alt: 'Competencias & Habilidades Técnicas',
+    tmpl_skills_label: 'Competencias:',
+    tmpl_tools_label: 'Herramientas & Tecnologías:',
+    tmpl_default_bullet: 'Gestión y ejecución de las responsabilidades operativas del cargo.',
+    tmpl_default_bullet_modern: 'Actuación orientada al cumplimiento de objetivos operativos y estratégicos.',
+    tmpl_default_bullet_exec: 'Liderazgo de iniciativas estratégicas y gestión continua de procesos organizacionales.',
+    tmpl_default_bullet_ats: 'Ejecución de rutinas operativas y proyectos corporativos del área.',
+    tmpl_default_bullet_corp: 'Responsable de la conducción de procesos técnicos y cumplimiento de metas corporativas.',
+    step_7_err_paste_job: 'Pegue la descripción de la vacante en el campo de arriba para analizar.',
+    step_7_err_fail: 'No fue posible analizar la vacante ahora. Puede continuar de todos modos.',
+    field_photo_tip: 'Consejo: Utilice una foto clara y con buena iluminación.',
+
+    // Preview
+    prev_download_pdf: 'Descargar Currículum PDF',
+    prev_edit_info: 'Editar Información',
+    prev_choose_template: 'Elegir Modelo Visual',
+    prev_model_modern: 'Moderno Limpio',
+    prev_model_classic: 'Ejecutivo Clásico',
+    prev_model_sidebar: 'Lateral Estructurado',
+    prev_btn_adapt: 'Adaptar a la vacante',
+    prev_btn_edit: 'Editar',
+    prev_btn_regenerate: 'Regenerar',
+    prev_btn_save: 'Guardar',
+    prev_btn_saved: '¡Guardado!',
+    prev_btn_download: 'DESCARGAR CURRÍCULUM EN PDF',
+    prev_btn_downloading: 'GENERANDO PDF VECTORIAL EN SERVIDOR...',
+    prev_cloud_connected: 'Conectado como',
+    prev_cloud_prompt_title: '¿Deseas acceder a este currículum en otros dispositivos?',
+    prev_cloud_prompt_desc: 'Tu currículum ya está guardado en este navegador. Para asegurarlo en la nube y no perderlo, inicia sesión gratis con 1 clic.',
+    prev_cloud_btn: 'Guardar en la Nube (Acceder)',
+    prev_match_title: 'Compatibilidad con esta vacante',
+    prev_match_badge: 'Función Inteligente • Análisis de Vacante',
+    prev_match_score_sub: 'Afinidad con el perfil',
+    prev_match_found_skills: 'Competencias Encontradas',
+    prev_match_relevant_exp: 'Experiencias Relevantes',
+    prev_match_improvements: 'Puntos de Mejora',
+    prev_match_disclaimer: '* El análisis de compatibilidad es una orientación técnica y no garantiza contratación.',
+
+    // Preview extra & badges
+    prev_ready_badge: 'Currículum Listo',
+    prev_ai_optimized: '• Optimizado con IA',
+    prev_default_title: 'Tu Currículum',
+    prev_cloud_synced_badge: 'Nube Sincronizada',
+    prev_cloud_synced_desc: 'Este currículum está guardado en tu nube y protegido para acceder desde cualquier dispositivo.',
+    prev_cloud_synced_tag: 'Guardado en la Nube',
+    prev_cloud_opt_badge: 'Opcional • Guardar en la Nube',
+    prev_tmpl_style_title: 'Elige el Estilo del Currículum:',
+    prev_tip_download: 'Consejo: La descarga del PDF A4 en alta definición comenzará directamente sin abrir ventana de impresión.',
+    prev_print_pdf_hint: 'Descarga directa: El PDF vectorial en alta definición se generará en el servidor y se guardará directamente.',
+
+    // Templates Ribbon
+    tmpl_modern_badge: 'Tecnología & Innovación',
+    tmpl_modern_desc: 'Diseño limpio y enfocado, sin saturación visual. Estándar para startups y tecnológicas.',
+    tmpl_executive_badge: 'Liderazgo & Finanzas',
+    tmpl_executive_desc: 'Diagramación noble con tipografía serif y fuerte presencia ejecutiva.',
+    tmpl_ats_badge: 'Filtro Online & ATS',
+    tmpl_ats_desc: 'Columna única 100% lineal, optimizada para robots de reclutamiento y portales.',
+    tmpl_impact_badge: 'Ventas & Producto',
+    tmpl_impact_desc: 'Panel lateral estructurado con alto contraste y presencia visual memorable.',
+    tmpl_corporate_badge: 'Bancos & Corporaciones',
+    tmpl_corporate_desc: 'Cuadrícula matemática minimalista para grandes industrias y gobernanza global.',
+    tmpl_minimalist_badge: 'Primer Empleo & Prácticas',
+    tmpl_minimalist_desc: 'Columna lateral ligera en tonos neutros, ideal para poca experiencia.',
+    tmpl_creative_badge: 'Diseño & Moda',
+    tmpl_creative_desc: 'Encabezado con franja de color y tipografía expresiva para perfiles creativos.',
+    tmpl_elegant_badge: 'Dirección & Jurídico',
+    tmpl_elegant_desc: 'Serif con filetes dorados, sofisticación clásica discreta.',
+    tmpl_tech_badge: 'Ingeniería & Datos',
+    tmpl_tech_desc: 'Línea de tiempo vertical que cuenta tu carrera cronológicamente.',
+    tmpl_intl_badge: 'Extranjero & Multinacionales',
+    tmpl_intl_desc: 'Formato internacional limpio, sin foto y 100% compatible con ATS globales.',
+    // Job Analysis panel
+    job_analysis_badge: 'Función Inteligente • Análisis de Puesto',
+    job_analysis_title: 'Compatibilidad con este puesto',
+    job_analysis_match: 'Ajuste al perfil',
+    job_analysis_skills_found: 'Competencias Encontradas',
+    job_analysis_exp_relevant: 'Experiencias Relevantes',
+    job_analysis_improvements: 'Puntos de Mejora',
+    job_analysis_disclaimer: '* El análisis de compatibilidad es un diagnóstico técnico comparativo y no garantiza la contratación ni la aprobación en procesos de selección.',
+    tmpl_achievements: 'Logros Principales & Resultados',
+    tmpl_skills_tools: 'Competencias & Tecnologías',
+
+    // ATS Audit Bar
+    ats_audit_title: 'Auditoría de Lectura ATS:',
+    ats_audit_sections: 'secciones estructuradas • Orden determinista • 100% texto indexable',
+    ats_score_label: 'Score Estructural:',
+    ats_verification_note: '(Verificación técnica de parsing)',
+
+    // Mobile bar
+    prev_mobile_creating: 'Creando PDF...',
+    prev_mobile_download: 'Descargar PDF',
+    prev_mobile_edit: 'Editar',
+
+    // Landing Hero Simulation
+    sim_header_brand: 'CURRÊ • Transformación en Tiempo Real',
+    sim_header_ai_active: 'IA Activa',
+    sim_detail_1: 'Carlos López • Analista Administrativo',
+    sim_detail_2: '"Cuidaba de las facturas y planillas en el sector..."',
+    sim_detail_3: '→ "Gestionó rutinas fiscales y control de facturación en Excel"',
+    sim_detail_4: 'Requisitos correspondientes: 92% de compatibilidad',
+    sim_default_role: 'Profesional',
+
+    // Landing Hero Saved Resume
+    hero_saved_resume_title: 'Currículum Guardado',
+    hero_saved_cloud_tooltip: '¿Deseas guardarlo en la nube? Acceso gratis opcional',
+
+    // Navbar Tooltips
+    nav_cloud_connected_title: 'Cuenta conectada en la nube',
+    nav_cloud_active_title: 'Nube activa',
+    nav_login_tooltip: 'Iniciar sesión (Opcional - guardar en nube)',
+    nav_menu_aria: 'Abrir menú',
+
+    // Adapt Job Modal
+    adapt_modal_title: 'Adaptar para Otra Vacante',
+    adapt_current_role: 'Cargo actual del currículum:',
+    adapt_modal_desc: 'Pega la descripción o requisitos de la nueva vacante. CURRÊ volverá a analizar tus experiencias reales y destacará los puntos más compatibles para esta oportunidad.',
+    adapt_job_label: 'Descripción de la nueva vacante',
+    adapt_job_placeholder: 'Pega aquí el texto de la nueva vacante (requisitos, responsabilidades, conocimientos)...',
+    adapt_truth_guarantee: 'Tus experiencias y datos registrados se mantendrán 100% verídicos.',
+    adapt_cancel: 'Cancelar',
+    adapt_submitting: 'Adaptando con IA...',
+    adapt_submit: 'Adaptar Currículum',
+
+    // Loading Overlay
+    loading_phase_1: 'Analizando tu perfil...',
+    loading_phase_2: 'Organizando tus experiencias...',
+    loading_phase_3: 'Adaptando tu currículum...',
+    loading_phase_4: 'Finalizando...',
+    loading_brand_badge: 'CURRÊ • IA en Acción',
+    loading_description: 'Refinando tus palabras, estructurando cronología y aplicando estándares profesionales.',
+    loading_moment: 'Solo unos instantes...',
+  },
+
+  fr: {
+    "step_1_ph_linkedin": "ex : linkedin.com/in/votrenom",
+    "step_1_ph_portfolio": "ex : montravail.fr / portfolio",
+    "step_3_err_company": "Indiquez le nom de l'entreprise.",
+    "step_3_err_role": "Indiquez le poste occupé.",
+    "step_3_pattern_hint": "Format : mm/aaaa",
+    "step_3_err_start_incomplete": "Date incomplète. Format mm/aaaa (ex : 03/2020).",
+    "step_3_err_start_empty": "Indiquez la date de début (mm/aaaa).",
+    "step_3_err_end_incomplete": "Date incomplète. Format mm/aaaa (ex : 11/2023).",
+    "step_3_err_end_empty": "Indiquez la date de fin (ou cochez « J'occupe actuellement ce poste » ci-dessous).",
+    "step_3_err_end_before_start": "La date de fin ne peut pas être antérieure à la date de début.",
+    "step_3_err_activities": "Décrivez brièvement les missions réalisées.",
+    "step_3_err_add_one": "Ajoutez au moins 1 expérience professionnelle ou cochez l'option premier emploi ci-dessus.",
+    "step_4_err_add_one": "Ajoutez au moins 1 formation ou niveau d'études.",
+    "step_4_formation_prefix": "Formation #",
+    "step_4_err_course": "Indiquez le diplôme ou filière (ex : Baccalauréat, Licence).",
+    "step_4_err_institution": "Indiquez l'établissement ou l'université.",
+    "step_4_err_start_year": "Indiquez une année valide à 4 chiffres (ex : 2018).",
+    "step_4_err_end_year": "Indiquez une année valide à 4 chiffres (ex : 2022).",
+    "step_4_err_end_before_start": "L'année d'obtention ne peut pas être antérieure à l'année de début.",
+    "step_5_err_select_one": "Sélectionnez au moins une compétence professionnelle ou un outil pour votre CV.",
+    "step_6_err_fill_all": "Renseignez le nom et l'organisme pour chaque cours ou supprimez les entrées vides.",
+    "step_6_course_prefix": "Formation complémentaire #",
+    "step_6_err_course_name": "Indiquez l'intitulé de la formation.",
+    "step_6_err_institution": "Indiquez l'organisme formateur.",
+    "step_6_err_year": "Indiquez une année à 4 chiffres (ex : 2023).",
+    "step_7_matched_skills": "✓ Compétences détectées dans votre profil :",
+    "step_7_essential_keywords": "Mots-clés essentiels de l'offre :",
+    "step_7_ai_tips": "💡 Conseils de l'IA pour cette candidature :",
+    "step_8_warning_incomplete_title": "Attention : Champs obligatoires incomplets",
+    "step_8_warning_incomplete_desc": "Pour garantir que votre CV franchisse les filtres de recrutement ATS avec succès, complétez les sections marquées En attente ci-dessous en cliquant sur Modifier.",
+    step_2_missing_error: "Indiquez le poste recherché (étape 2).",
+    step_3_no_exp_title: "En recherche d’un premier emploi / Sans expérience professionnelle formelle",
+    step_3_no_exp_sub: "Cochez cette option si vous êtes étudiant, jeune diplômé ou démarrez votre carrière.",
+    step_3_no_exp_alert_title: "Profil Sans Expérience Formelle Sélectionné",
+    step_3_no_exp_alert_desc: "Parfait ! CURRÊ va structurer votre CV en mettant en valeur votre formation, vos compétences pratiques et vos certifications.",
+    step_3_no_exp_revert: "Je préfère renseigner mes expériences professionnelles",
+    step_3_ai_tip: "Rédigez simplement vos tâches du quotidien avec vos propres mots. Notre IA les transformera en réalisations professionnelles percutantes.",
+    step_3_company_number: "Expérience #",
+    label_remove: "Supprimer",
+    label_present: "Présent",
+    btn_add: "Ajouter",
+    step_3_company_label: "Nom de l’entreprise",
+    step_3_company_placeholder: "ex : Logistique IDF, Boulangerie Centrale, Cabinet Martin",
+    step_3_role_label: "Poste / Fonction",
+    step_3_role_placeholder: "ex : Assistant Administratif, Vendeur Polyvalent",
+    step_3_start_label: "Date de début",
+    step_3_end_label: "Date de fin",
+    step_3_pattern_mmyyyy: "Format : mm/aaaa",
+    step_3_current_job: "J’occupe actuellement ce poste",
+    step_3_activities_label: "Missions et responsabilités quotidiennes",
+    step_3_activities_placeholder: "ex : Accueil des clients, gestion des commandes, classement et suivi des factures...",
+    step_3_results_label: "Résultats, réussites ou améliorations (Optionnel)",
+    step_3_results_placeholder: "ex : Réduction de 30% du temps de traitement des dossiers grâce à de nouveaux modèles...",
+    step_3_error_company: "Indiquez le nom de l’entreprise.",
+    step_3_error_role: "Indiquez le poste occupé.",
+    step_3_error_start_date: "Indiquez la date de début (mm/aaaa).",
+    step_3_error_end_date: "Indiquez la date de fin (ou cochez poste actuel).",
+    step_3_error_chronology: "La date de fin ne peut pas être antérieure à la date de début.",
+    step_3_error_activities: "Décrivez brièvement les missions accomplies.",
+    step_3_missing_error: "Renseignez vos expériences ou sélectionnez premier emploi.",
+    step_4_course_label: "Diplôme / Formation",
+    step_4_course_ph: "ex : Baccalauréat, BTS Gestion PME, Licence Économie...",
+    step_4_inst_label: "Établissement / École / Université",
+    step_4_inst_ph: "ex : Lycée Montaigne, Université Paris 1, AFPA...",
+    step_4_start_year: "Année de début",
+    step_4_end_year: "Année d’obtention / Prévue",
+    step_4_status_label: "Statut",
+    step_4_formation_num: "Formation",
+    step_4_error_min_detail: "Ajoutez au moins un niveau d’études ou une formation.",
+    step_4_error_course: "Indiquez le diplôme ou la formation.",
+    step_4_error_inst: "Indiquez le nom de l’établissement.",
+    step_4_error_start_year: "Indiquez une année valide à 4 chiffres (ex : 2018).",
+    step_4_error_end_year: "Indiquez une année valide à 4 chiffres (ex : 2022).",
+    step_4_error_chronology: "L’année de fin ne peut pas précéder l’année de début.",
+    step_4_missing_error: "Renseignez au moins une formation.",
+    step_5_skills_title: "Compétences professionnelles (cliquez pour sélectionner) :",
+    step_5_skills_custom_ph: "Ajouter une autre compétence (ex : Rédaction, Négociation...)",
+    step_5_tools_title: "Logiciels, systèmes et outils :",
+    step_5_tools_custom_ph: "Ajouter un autre logiciel (ex : Canva, Trello, SAP...)",
+    step_5_error_detail: "Sélectionnez au moins une compétence ou un outil pour votre CV.",
+    step_5_missing_error: "Sélectionnez au moins une compétence ou un outil.",
+    step_6_empty: "Aucune formation supplémentaire ajoutée.",
+    step_6_add_first: "+ Ajouter ma première formation certifiante",
+    step_6_course_num: "Formation",
+    step_6_name_label: "Nom de la formation",
+    step_6_name_ph: "ex : Perfectionnement Excel, Service Client & Vente...",
+    step_6_inst_label: "Organisme",
+    step_6_inst_ph: "ex : CCI Paris, Udemy, Coursera, AFPA...",
+    step_6_year_label: "Année",
+    step_6_hours_label: "Volume horaire (optionnel)",
+    step_6_hours_ph: "ex : 35 heures",
+    step_6_error_detail: "Renseignez l’intitulé et l’organisme pour chaque formation.",
+    step_6_error_name: "Indiquez le nom de la formation.",
+    step_6_error_inst: "Indiquez l’organisme de formation.",
+    step_6_error_year: "Indiquez une année à 4 chiffres (ex : 2023).",
+    step_6_missing_error: "Vérifiez les formations ajoutées.",
+    step_7_tag: "Différenciateur Intelligent CURRÊ",
+    step_7_desc_label: "Description ou critères de l’offre d’emploi (LinkedIn, France Travail, Indeed...)",
+    step_7_desc_ph: "Collez ici le texte de l’offre (missions, compétences recherchées, profil)...",
+    step_7_ethics_text: "Engagement éthique : L’IA N’INVENTE PAS de fausses compétences ni d’emplois fictifs. Elle optimise et valorise votre profil authentique.",
+    step_7_analyzing_btn: "Analyse de l’offre avec l’IA...",
+    step_7_analyze_btn: "ANALYSER L’OFFRE AVEC L’IA",
+    step_7_analysis_completed: "Analyse de l’offre terminée",
+    step_7_mapped_role: "Poste ciblé identifié",
+    step_7_estimated_match: "Compatibilité estimée",
+    step_7_skills_found: "✓ Compétences détectées dans votre profil :",
+    step_7_keywords_essential: "Mots-clés clés de l’offre :",
+    step_7_ai_tips_title: "💡 Conseils de l’IA pour cette candidature :",
+    step_8_tag: "Tout est prêt pour la génération !",
+    step_8_edit_btn: "Modifier",
+    step_8_btn_sub: "Génération rapide et professionnelle par IA • 100% gratuit sans inscription obligatoire.",
+    step_8_btn_sub_disabled: "Remplissez tous les champs obligatoires ci-dessus pour débloquer la génération.",
+    step_8_items_count: "élément(s)",
+    step_8_optional_provided: "Renseigné",
+    field_linkedin_ph: "ex: linkedin.com/in/votreprofil",
+    field_portfolio_ph: "ex: monsite.fr / portfolio",
+    // Slogan & Brand
+    brand_slogan: 'Décrochez le bon poste.',
+    footer_developed_by: 'Site développé par',
+    footer_tagline: 'Plateforme intelligente de CV avec IA optimisée pour les recruteurs et les systèmes ATS.',
+    footer_terms: 'Conditions et Confidentialité',
+    nav_create: 'Créer un CV',
+    nav_how_it_works: 'Comment ça marche',
+    nav_features: 'Fonctionnalités',
+    nav_saved_resume: 'Voir CV Enregistré',
+    nav_login_cloud: 'Connexion / Cloud',
+    nav_cta_create: 'Créer Maintenant',
+    nav_mobile_create: 'Créer',
+    nav_header: 'Navigation',
+    nav_smart_features: 'Fonctionnalités intelligentes',
+    nav_cloud_active: 'Cloud Actif',
+    nav_login_cloud_full: 'Connexion / Sauvegarder dans le Cloud',
+    nav_optional: 'Optionnel',
+
+    // Modals Info
+    how_title: "Comment fonctionne CURRÊ ?",
+    how_subtitle: "Décrochez le bon poste en seulement 3 étapes simples",
+    how_step_1_title: "Remplissez vos informations",
+    how_step_1_desc: "Saisissez vos coordonnées, vos formations et vos expériences. Ne vous souciez pas d'utiliser des mots compliqués — décrivez simplement votre quotidien avec vos propres mots.",
+    how_step_2_title: "Collez l'offre d'emploi souhaitée (facultatif)",
+    how_step_2_desc: "L'IA analyse les exigences et les mots-clés de l'offre pour mettre en valeur vos expériences et qualifications réelles les plus adaptées.",
+    how_step_3_title: "Recevez votre CV en PDF",
+    how_step_3_desc: "Prêt à être envoyé ! Dans un format professionnel approuvé par les recruteurs et prêt à être imprimé ou envoyé par e-mail et WhatsApp.",
+    how_info_box: "L'IA de CURRÊ n'invente jamais de fausses expériences. Elle valorise uniquement votre parcours réel.",
+    how_btn_start: "CRÉER MON CV MAINTENANT",
+
+    feat_modal_title: "Fonctionnalités de CURRÊ",
+    feat_modal_subtitle: "La technologie conçue pour votre évolution professionnelle",
+    feat_item_1_title: "Optimisation de la Rédaction",
+    feat_item_1_desc: "Transforme des phrases simples en formules d'action à fort impact reconnues lors des sélections.",
+    feat_item_2_title: "Lecteur d'Offre Intelligent",
+    feat_item_2_desc: "Extrait les compétences clés de l'offre pour positionner votre profil avec un maximum de pertinence.",
+    feat_item_3_title: "Format ATS Épuré",
+    feat_item_3_desc: "Formaté pour franchir sans encombre les systèmes de tri automatique des candidatures (Gupy, Kenoby, LinkedIn).",
+    feat_item_4_title: "Confidentialité Totale",
+    feat_item_4_desc: "Nous ne demandons aucun document confidentiel (numéro de sécurité sociale, carte d'identité). Vos données vous appartiennent.",
+    feat_modal_btn_close: "Fermer",
+
+    // Hero
+    hero_badge: 'Intelligence Artificielle Conçue pour Ceux Qui Veulent des Résultats',
+    hero_title_p1: 'Votre prochain emploi commence par un ',
+    hero_title_highlight: 'meilleur CV.',
+    hero_subtitle: 'Créez un CV professionnel avec l’intelligence artificielle et adaptez votre profil au poste visé.',
+    hero_cta_start: 'CRÉER MON CV',
+    hero_cta_how: 'COMMENT ÇA MARCHE',
+    hero_trust_free: '100% gratuit',
+    hero_trust_no_signup: 'Sans inscription obligatoire',
+    hero_trust_cloud: 'Sauvegarde Cloud (Optionnel)',
+    hero_saved_session: 'SESSION ENREGISTRÉE',
+    hero_saved_ready: 'Prêt pour téléchargement ou édition',
+    hero_saved_open: 'Ouvrir Enregistré',
+    hero_saved_new: 'Nouveau',
+
+    // Simulation
+    sim_title_1: '1. Informations de base',
+    sim_badge_1: 'Saisie simple',
+    sim_title_2: '2. Expérience informelle',
+    sim_badge_2: 'Vos propres mots',
+    sim_title_3: '3. Optimisation IA CURRÊ',
+    sim_badge_3: 'Standard des recruteurs',
+    sim_title_4: '4. Alignement avec le poste',
+    sim_badge_4: 'CV prêt en PDF !',
+    sim_no_fake: 'Aucune expérience inventée',
+    sim_try_now: 'Essayer maintenant →',
+
+    // Features
+    feat_1_title: 'Simple comme un échange',
+    feat_1_desc: 'Décrivez vos tâches avec vos propres mots. CURRÊ les convertit en réalisations professionnelles à fort impact.',
+    feat_2_title: 'Aligné sur l’Offre d’Emploi',
+    feat_2_desc: 'Collez la fiche de poste et CURRÊ met en avant les compétences clés recherchées par les recruteurs.',
+    feat_3_title: 'Éthique et 100% Fiable',
+    feat_3_desc: 'Garantie absolue d’intégrité : l’IA n’invente jamais d’entreprises ou de postes. Elle valorise votre parcours réel.',
+
+    // Wizard Steps & Labels
+    wiz_back_home: 'Retour à l’accueil',
+    wiz_prev_step: 'Étape précédente',
+    wiz_fill_sample: 'Remplir avec un exemple',
+    wiz_step_label: 'Étape',
+    wiz_of_label: 'sur',
+    step_1_title: 'Coordonnées',
+    step_2_title: 'Objectif Professionnel',
+    step_3_title: 'Expérience Professionnelle',
+    step_4_title: 'Formation Académique',
+    step_5_title: 'Compétences & Outils',
+    step_6_title: 'Formations & Certifications',
+    step_7_title: 'Alignement avec l’Offre',
+    step_8_title: 'Révision et Génération',
+
+    // Wizard Step 1
+    step_1_heading: 'Vos Coordonnées',
+    step_1_sub: 'Informations que le recruteur utilisera pour vous contacter en entretien. Nous ne demandons aucun document confidentiel.',
+    field_full_name: 'Nom Complet',
+    field_name_placeholder: 'ex: Marie Dupont',
+    field_name_error: 'Indiquez votre nom et prénom (minimum 3 caractères).',
+    label_required: 'Obligatoire',
+    label_optional: 'Facultatif',
+    field_city_state: 'Ville / Région / Pays',
+    field_city_placeholder: 'ex: Paris, France / Lyon',
+    field_city_error: 'Indiquez votre ville et région/pays.',
+    field_phone: 'Téléphone / WhatsApp',
+    field_phone_format: 'Format : 06 12 34 56 78 ou +33 6 12 34 56 78',
+    field_phone_placeholder: '06 12 34 56 78',
+    field_phone_error: 'Indiquez un numéro valide (ex: 06 12 34 56 78 ou +33 6 12 34 56 78).',
+    field_email: 'E-mail professionnel',
+    field_email_placeholder: 'ex: votreemail@gmail.com',
+    field_email_error: 'Indiquez une adresse e-mail valide.',
+    field_linkedin: 'LinkedIn (facultatif)',
+    field_portfolio: 'Portfolio / Site (facultatif)',
+    field_photo_toggle: 'Ajouter une photo sur le CV',
+    field_photo_change: 'Changer la photo',
+    field_photo_upload: 'Télécharger une photo',
+
+    // Wizard Step 2
+    step_2_heading: 'Quel poste recherchez-vous ?',
+    step_2_sub: 'Votre objectif professionnel permet au recruteur de comprendre immédiatement où vous souhaitez évoluer.',
+    step_2_role_label: 'Poste Visé',
+    step_2_role_placeholder: 'Exemple : Assistant Administratif',
+    step_2_role_error: 'Indiquez le poste visé pour cibler votre CV (ou choisissez une suggestion ci-dessous).',
+    step_2_suggestions_label: 'Suggestions populaires (cliquez pour appliquer) :',
+    step_2_goal_label: 'Objectif professionnel / Résumé personnel (optionnel)',
+    step_2_goal_placeholder: 'Ex : Recherche un poste d\'Assistant Administratif pour organiser la gestion documentaire, la facturation et soutenir les équipes avec rigueur et dynamisme.',
+    step_2_ai_tip: 'Conseil IA : Si vous laissez vide ou écrivez avec des mots simples, notre IA rédigera automatiquement un résumé professionnel percutant et élégant pour vous.',
+
+    // Wizard Step 3
+    step_3_heading: 'Détaillons votre expérience professionnelle',
+    step_3_sub: 'Ajoutez vos précédents postes ou votre emploi actuel. L\'IA les organisera chronologiquement.',
+    step_3_add_btn: '+ AJOUTER UNE EXPÉRIENCE',
+    step_3_no_exp_btn: 'Je n’ai pas d’expérience formelle (Premier Emploi)',
+    step_3_no_exp_checkbox: 'En recherche d’un premier emploi / Sans expérience formelle',
+    step_3_no_exp_desc: 'Cochez cette option si vous êtes étudiant, jeune diplômé ou démarrez sur le marché du travail.',
+    step_3_no_exp_active_title: 'Profil Sans Expérience Formelle Sélectionné',
+    step_3_no_exp_active_desc: 'Parfait ! CURRÊ mettra en valeur votre Formation, vos Certifications et vos Compétences Pratiques pour valoriser votre potentiel auprès des recruteurs.',
+    step_3_no_exp_switch_back: 'Je préfère renseigner mes expériences professionnelles',
+    step_3_exp_num: 'Expérience',
+    step_3_remove_exp: 'Supprimer',
+    step_3_field_company: 'Entreprise',
+    step_3_field_company_placeholder: 'ex : Logistique Express, Société Martin, Cabinet Conseil',
+    step_3_field_role: 'Poste occupé',
+    step_3_field_role_placeholder: 'ex : Assistant Administratif, Agent d\'accueil',
+    step_3_field_start: 'Début (Mois/Année)',
+    step_3_field_end: 'Fin (Mois/Année)',
+    step_3_field_current: 'J\'occupe actuellement ce poste',
+    step_3_field_activities: 'Missions et responsabilités quotidiennes',
+    step_3_field_activities_tip: 'Astuce : Décrivez vos tâches avec vos propres mots. L\'IA les formulera avec des verbes d\'action à fort impact.',
+    step_3_field_results: 'Résultats clés, réussites ou améliorations (Optionnel)',
+    step_3_field_results_tip: 'Astuce : Mentionnez des chiffres ou objectifs atteints (ex : gain de temps de 30% sur le traitement des dossiers).',
+
+    // Wizard Step 4
+    step_4_heading: 'Votre Formation Académique',
+    step_4_sub: 'Indiquez votre niveau d’études : bac, bts, licence, master ou diplôme professionnel.',
+    step_4_add_btn: '+ AJOUTER UNE FORMATION',
+    step_4_error_min: 'Veuillez ajouter au moins 1 niveau d\'études ou diplôme.',
+    step_4_field_course: 'Diplôme / Filière',
+    step_4_field_institution: 'Établissement d\'enseignement',
+    step_4_field_start_year: 'Année de Début',
+    step_4_field_end_year: 'Année d\'Obtention / Prévue',
+    step_4_field_status: 'Statut',
+    step_4_status_completed: 'Terminé',
+    step_4_status_in_progress: 'En cours',
+    step_4_status_interrupted: 'Interrompu',
+
+    // Wizard Step 5
+    step_5_heading: 'Compétences et Outils',
+    step_5_sub: 'Sélectionnez ou écrivez les compétences et logiciels que vous maîtrisez pour les mettre en valeur. Au moins une est requise.',
+    step_5_error: 'Sélectionnez au moins une compétence professionnelle ou un outil pour votre CV.',
+    step_5_label: 'Compétences professionnelles (cliquez pour sélectionner) :',
+    step_5_tools_label: 'Logiciels, progiciels et outils :',
+    step_5_custom_placeholder: 'Saisir une autre compétence (ex : Négociation, Analyse...)',
+    step_5_tools_custom_placeholder: 'Saisir un autre outil (ex : Canva, Trello...)',
+    step_5_add_btn: 'Ajouter',
+
+    // Wizard Step 6
+    step_6_heading: 'Formations & Certifications Complémentaires',
+    step_6_sub: 'Ateliers, langues, cours en ligne ou certifications techniques qui enrichissent votre profil.',
+    step_6_add_btn: '+ AJOUTER UNE FORMATION',
+    step_6_empty_title: 'Aucune formation ajoutée pour l’instant.',
+    step_6_empty_sub: 'Cette section est facultative, mais témoigne de votre curiosité et soif d’apprendre !',
+    step_6_empty_btn: '+ Ajouter ma première formation',
+    step_6_field_name: 'Intitulé de la Formation',
+    step_6_field_institution: 'Organisme / École',
+    step_6_field_year: 'Année',
+    step_6_field_hours: 'Durée / Heures (optionnel)',
+
+    // Wizard Step 7
+    step_7_heading: 'Alignez votre CV directement avec l’offre d’emploi',
+    step_7_sub: 'Collez la description du poste. Notre IA analysera les exigences pour mettre en avant vos atouts et mots-clés les plus pertinents.',
+    step_7_badge: 'Atout Intelligent CURRÊ',
+    step_7_textarea_label: 'Description ou exigences du poste (Copiez et collez depuis LinkedIn, Indeed, France Travail...)',
+    step_7_ethics_title: 'Engagement Éthique et Transparence :',
+    step_7_ethics_desc: 'L\'IA n\'invente AUCUNE expérience ni compétence. Elle valorise fidèlement votre parcours réel avec les termes recherchés par les recruteurs.',
+    step_7_btn_analyze: 'ANALYSER L\'OFFRE AVEC L\'IA',
+    step_7_btn_analyzing: 'Analyse des exigences par l\'IA...',
+    step_7_skip_hint: '(Vous pouvez également passer cette étape en cliquant sur Suivant)',
+
+    // Wizard Step 8
+    step_8_badge: 'Tout est prêt pour la génération !',
+    step_8_heading: 'Vérifiez vos informations',
+    step_8_sub: 'Passez en revue chaque section ci-dessous avant de générer votre CV optimisé par l’IA.',
+    step_8_warning_title: 'Attention : Champs obligatoires incomplets',
+    step_8_warning_desc: 'Pour garantir la réussite de votre candidature auprès des recruteurs, complétez les sections marquées En attente ci-dessous en cliquant sur Modifier.',
+    step_8_status_completed: 'Renseigné',
+    step_8_status_pending: 'En attente (*)',
+    step_8_btn_edit: 'Modifier',
+    step_8_btn_generate: '✨ GÉNÉRER MON CV',
+    step_8_guarantee: 'Génération rapide, professionnelle et intelligente • 100% gratuite sans inscription obligatoire.',
+    step_8_pending_notice: 'Complétez tous les champs obligatoires ci-dessus pour activer la génération.',
+
+    // Wizard Bottom Nav
+    wiz_back: 'Retour',
+    wiz_next: 'Suivant',
+    wiz_req_warning: 'Remplissez les champs obligatoires (*) pour continuer',
+    wiz_generate_btn: 'GÉNÉRER MON CV',
+    wiz_jump_review: 'Aller à la Révision (Étape 8)',
+
+    // Resume sections
+    sec_summary: 'Résumé Professionnel',
+    sec_experience: 'Expérience Professionnelle',
+    sec_education: 'Formation Académique',
+    sec_skills: 'Compétences',
+    sec_courses: 'Formations & Certifications',
+    sec_contact: 'Contact',
+
+    // Template Labels
+    tmpl_summary: 'Résumé Professionnel',
+    tmpl_experience: 'Expérience Professionnelle',
+    tmpl_skills: 'Compétences & Outils',
+    tmpl_skills_core: 'Compétences Clés',
+    tmpl_skills_main: 'Compétences Principales',
+    tmpl_tools: 'Logiciels & Outils Maîtrisés',
+    tmpl_tools_soft: 'Outils & Logiciels',
+    tmpl_education: 'Formation & Diplômes',
+    tmpl_education_short: 'Formation',
+    tmpl_courses: 'Formations & Certifications',
+    tmpl_courses_short: 'Formations',
+    tmpl_certifications: 'Certifications',
+    tmpl_contact: 'Contact',
+    tmpl_contact_location: 'Localisation :',
+    tmpl_present: 'Présent',
+    tmpl_status_completed: 'Terminé',
+    tmpl_status_in_progress: 'En cours',
+    tmpl_status_interrupted: 'Interrompu',
+    tmpl_qualifications: 'Résumé de Qualifications',
+    tmpl_qualifications_synthesis: 'Synthèse de Qualifications',
+    tmpl_profile: 'Profil Professionnel',
+    tmpl_trajectory: 'Parcours Professionnel',
+    tmpl_exec_skills: 'Compétences Dirigeantes & Outils',
+    tmpl_exec_mgmt: 'Management & Leadership',
+    tmpl_exec_systems: 'Systèmes & Technologies',
+    tmpl_exec_cert: 'Certifications & Perfectionnement Professionnel',
+    tmpl_skills_tech_alt: 'Compétences & Aptitudes Techniques',
+    tmpl_skills_label: 'Compétences :',
+    tmpl_tools_label: 'Outils & Technologies :',
+    tmpl_default_bullet: 'Prise en charge des missions opérationnelles et contribution aux objectifs du service.',
+    tmpl_default_bullet_modern: 'Action orientée vers l\'atteinte des objectifs opérationnels et stratégiques.',
+    tmpl_default_bullet_exec: 'Pilotage d\'initiatives stratégiques et gestion continue des processus d\'organisation.',
+    tmpl_default_bullet_ats: 'Exécution des opérations quotidiennes et conduite des projets d\'entreprise du secteur.',
+    tmpl_default_bullet_corp: 'Responsable de la conduite des processus techniques et du respect des exigences de l\'entreprise.',
+    step_7_err_paste_job: 'Collez la description de l\'offre dans le champ ci-dessus pour analyser.',
+    step_7_err_fail: 'Impossible d\'analyser l\'offre pour l\'instant. Vous pouvez continuer quand même.',
+    field_photo_tip: 'Conseil : Utilisez une photo nette avec un bon éclairage.',
+
+    // Preview
+    prev_download_pdf: 'Télécharger le CV en PDF',
+    prev_edit_info: 'Modifier les Informations',
+    prev_choose_template: 'Choisir le Modèle',
+    prev_model_modern: 'Moderne Épuré',
+    prev_model_classic: 'Exécutif Classique',
+    prev_model_sidebar: 'Latéral Structuré',
+    prev_btn_adapt: 'Adapter à l\'offre',
+    prev_btn_edit: 'Modifier',
+    prev_btn_regenerate: 'Régénérer',
+    prev_btn_save: 'Enregistrer',
+    prev_btn_saved: 'Enregistré !',
+    prev_btn_download: 'TÉLÉCHARGER LE CV EN PDF',
+    prev_btn_downloading: 'GÉNÉRATION DU PDF VECTORIEL SUR LE SERVEUR...',
+    prev_cloud_connected: 'Connecté en tant que',
+    prev_cloud_prompt_title: 'Souhaitez-vous accéder à ce CV sur d\'autres appareils ?',
+    prev_cloud_prompt_desc: 'Votre CV est prêt et sauvegardé dans ce navigateur. Pour le conserver en toute sécurité dans le cloud, connectez-vous gratuitement en 1 clic.',
+    prev_cloud_btn: 'Sauvegarder dans le Cloud (Connexion)',
+    prev_match_title: 'Adéquation avec ce poste',
+    prev_match_badge: 'Fonction Intelligente • Analyse de l\'Offre',
+    prev_match_score_sub: 'Adéquation au profil',
+    prev_match_found_skills: 'Compétences Identifiées',
+    prev_match_relevant_exp: 'Expériences Pertinentes',
+    prev_match_improvements: 'Pistes d\'Amélioration',
+    prev_match_disclaimer: '* L\'analyse d\'adéquation est une évaluation technique et ne garantit pas l\'embauche.',
+
+    // Preview extra & badges
+    prev_ready_badge: 'CV Prêt',
+    prev_ai_optimized: '• Optimisé par IA',
+    prev_default_title: 'Votre CV',
+    prev_cloud_synced_badge: 'Cloud Synchronisé',
+    prev_cloud_synced_desc: 'Ce CV est sauvegardé dans votre cloud et protégé pour un accès sur tout appareil.',
+    prev_cloud_synced_tag: 'Sauvegardé dans le Cloud',
+    prev_cloud_opt_badge: 'Optionnel • Sauvegarder dans le Cloud',
+    prev_tmpl_style_title: 'Choisissez le Style du CV :',
+    prev_tip_download: 'Conseil : Le téléchargement du PDF A4 débutera directement sans ouvrir de fenêtre d\'impression.',
+    prev_print_pdf_hint: 'Téléchargement direct : Le PDF vectoriel haute définition sera généré sur le serveur et téléchargé directement.',
+
+    // Templates Ribbon
+    tmpl_modern_badge: 'Tech & Innovation',
+    tmpl_modern_desc: 'Design épuré et percutant, sans surcharge visuelle. Idéal pour tech et startups.',
+    tmpl_executive_badge: 'Direction & Finance',
+    tmpl_executive_desc: 'Mise en page noble avec typographie avec empattements et autorité exécutive.',
+    tmpl_ats_badge: 'Filtrage ATS en Ligne',
+    tmpl_ats_desc: 'Colonne unique 100% linéaire, optimisée pour les robots de recrutement et portails.',
+    tmpl_impact_badge: 'Vente & Produit',
+    tmpl_impact_desc: 'Panneau latéral structuré à fort contraste pour une présence mémorable.',
+    tmpl_corporate_badge: 'Grandes Entreprises & Banques',
+    tmpl_corporate_desc: 'Grille mathématique minimaliste pour grands groupes et gouvernance internationale.',
+    tmpl_minimalist_badge: 'Premier Emploi & Stage',
+    tmpl_minimalist_desc: 'Colonne latérale légère en tons neutres, idéale pour un profil junior.',
+    tmpl_creative_badge: 'Design & Mode',
+    tmpl_creative_desc: 'En-tête avec bande colorée et typographie expressive pour profils créatifs.',
+    tmpl_elegant_badge: 'Direction & Juridique',
+    tmpl_elegant_desc: 'Serif avec filets dorés, sophistication classique discrète.',
+    tmpl_tech_badge: 'Ingénierie & Données',
+    tmpl_tech_desc: 'Frise chronologique verticale qui raconte votre carrière.',
+    tmpl_intl_badge: 'International & Multinationales',
+    tmpl_intl_desc: 'Format international épuré, sans photo et 100% compatible avec les ATS mondiaux.',
+    // Job Analysis panel
+    job_analysis_badge: 'Fonction Intelligente • Analyse de Poste',
+    job_analysis_title: 'Compatibilité avec ce poste',
+    job_analysis_match: 'Adéquation au profil',
+    job_analysis_skills_found: 'Compétences Trouvées',
+    job_analysis_exp_relevant: 'Expériences Pertinentes',
+    job_analysis_improvements: 'Axes d\'Amélioration',
+    job_analysis_disclaimer: '* L\'analyse de compatibilité est un diagnostic technique comparatif et ne garantit ni l\'embauche ni la sélection.',
+    tmpl_achievements: 'Réalisations Clés & Résultats',
+    tmpl_skills_tools: 'Compétences & Technologies',
+
+    // ATS Audit Bar
+    ats_audit_title: 'Audit de Lecture ATS :',
+    ats_audit_sections: 'sections structurées • Ordre déterministe • 100% texte indexable',
+    ats_score_label: 'Score Structurel :',
+    ats_verification_note: '(Vérification technique de parsing)',
+
+    // Mobile bar
+    prev_mobile_creating: 'Création du PDF...',
+    prev_mobile_download: 'Télécharger le PDF',
+    prev_mobile_edit: 'Modifier',
+
+    // Landing Hero Simulation
+    sim_header_brand: 'CURRÊ • Transformation en Temps Réel',
+    sim_header_ai_active: 'IA Active',
+    sim_detail_1: 'Thomas Martin • Analyste Opérationnel',
+    sim_detail_2: '"Gérait les factures et tableaux du service..."',
+    sim_detail_3: '→ "A piloté les opérations fiscales et le suivi de facturation sous Excel"',
+    sim_detail_4: 'Critères correspondants : 92% d\'adéquation',
+    sim_default_role: 'Professionnel',
+
+    // Landing Hero Saved Resume
+    hero_saved_resume_title: 'CV Sauvegardé',
+    hero_saved_cloud_tooltip: 'Sauvegarder dans le cloud ? Connexion gratuite optionnelle',
+
+    // Navbar Tooltips
+    nav_cloud_connected_title: 'Compte connecté au cloud',
+    nav_cloud_active_title: 'Cloud actif',
+    nav_login_tooltip: 'Connexion (Optionnel - sauvegarde cloud)',
+    nav_menu_aria: 'Ouvrir le menu',
+
+    // Adapt Job Modal
+    adapt_modal_title: 'Adapter à une Autre Offre',
+    adapt_current_role: 'Poste actuel sur le CV :',
+    adapt_modal_desc: 'Collez la description ou les exigences du nouveau poste. CURRÊ va réanalyser vos expériences réelles pour valoriser les points les plus pertinents pour cette opportunité.',
+    adapt_job_label: 'Description du nouveau poste',
+    adapt_job_placeholder: 'Collez ici l\'annonce (missions, profil recherché, compétences souhaitées)...',
+    adapt_truth_guarantee: 'Vos expériences et informations renseignées demeurent 100% véridiques.',
+    adapt_cancel: 'Annuler',
+    adapt_submitting: 'Adaptation par IA...',
+    adapt_submit: 'Adapter le CV',
+
+    // Loading Overlay
+    loading_phase_1: 'Analyse de votre profil...',
+    loading_phase_2: 'Organisation de vos expériences...',
+    loading_phase_3: 'Adaptation de votre CV...',
+    loading_phase_4: 'Finalisation...',
+    loading_brand_badge: 'CURRÊ • IA en Action',
+    loading_description: 'Optimisation de vos formulations, structuration chronologique et application des critères de recrutement.',
+    loading_moment: 'Encore quelques instants...',
+  },
+};
+
+interface LanguageContextProps {
+  language: Language;
+  setLanguage: (lang: Language) => void;
+  t: (key: string) => string;
+}
+
+export const MANUAL_LANG_STORAGE_KEY = 'curre_language';
+
+export interface LanguageMeta {
+  htmlLang: string;
+  title: string;
+  description: string;
+  canonicalUrl: string;
+}
+
+export const LANGUAGE_METADATA: Record<Language, LanguageMeta> = {
+  pt: {
+    htmlLang: 'pt-BR',
+    title: 'CURRÊ - Gerador de Currículo com IA',
+    description: 'Corra atrás da vaga certa. Crie currículos profissionais modernos adaptados para vagas de emprego utilizando inteligência artificial.',
+    canonicalUrl: 'https://www.curreai.com/pt/',
+  },
+  en: {
+    htmlLang: 'en',
+    title: 'CURRÊ - AI Resume Builder',
+    description: 'Run after the right job. Create modern, professional resumes tailored to job postings using artificial intelligence.',
+    canonicalUrl: 'https://www.curreai.com/en/',
+  },
+  es: {
+    htmlLang: 'es',
+    title: 'CURRÊ - Creador de Currículum con IA',
+    description: 'Ve tras el empleo adecuado. Crea currículums profesionales modernos adaptados a ofertas laborales con inteligencia artificial.',
+    canonicalUrl: 'https://www.curreai.com/es/',
+  },
+  fr: {
+    htmlLang: 'fr',
+    title: 'CURRÊ - Créateur de CV avec IA',
+    description: 'Décrochez le bon poste. Créez des CV professionnels modernes adaptés aux offres d\'emploi grâce à l\'intelligence artificielle.',
+    canonicalUrl: 'https://www.curreai.com/fr/',
+  },
+};
+
+/**
+ * Mapeia uma tag de locale BCP 47 (ex: 'pt-BR', 'es-MX', 'fr-CA', 'en-US')
+ * para um dos quatro idiomas suportados pelo CURRÊ ('pt', 'es', 'fr', 'en').
+ * Retorna null para idiomas não suportados.
+ */
+export function matchSupportedLanguage(localeTag: unknown): Language | null {
+  if (!localeTag || typeof localeTag !== 'string') return null;
+  const normalized = localeTag.trim().toLowerCase();
+  const primary = normalized.split(/[-_]/)[0];
+  if (primary === 'pt') return 'pt';
+  if (primary === 'es') return 'es';
+  if (primary === 'fr') return 'fr';
+  if (primary === 'en') return 'en';
+  return null;
+}
+
+/**
+ * Extrai o idioma a partir do pathname da URL (/pt/, /en/, /es/, /fr/ ou /pt, /en...).
+ * Retorna null se não houver prefixo de idioma suportado.
+ */
+export function getLanguageFromPath(pathname?: string): Language | null {
+  if (typeof window === 'undefined' && pathname === undefined) return null;
+  const path = pathname !== undefined ? pathname : (typeof window !== 'undefined' ? window.location.pathname : '');
+  const match = path.match(/^\/(pt|en|es|fr)(?:\/|$)/i);
+  if (match && match[1]) {
+    return match[1].toLowerCase() as Language;
+  }
+  return null;
+}
+
+/**
+ * Aplica os metadados do documento no <head> e na tag <html>:
+ * - <html lang="...">
+ * - <title> e tags OpenGraph/Twitter correspondentes
+ * - <meta name="description"> e og:description
+ * - <link rel="canonical" href="..."> autorreferencial
+ * - Links <link rel="alternate" hreflang="..." href="..."> recíprocos (pt, en, es, fr, x-default)
+ */
+export function applyDocumentMetadata(lang: Language) {
+  if (typeof document === 'undefined') return;
+
+  const meta = LANGUAGE_METADATA[lang] || LANGUAGE_METADATA.pt;
+
+  // 1. <html lang="...">
+  document.documentElement.lang = meta.htmlLang;
+
+  // 2. <title> e og:title
+  document.title = meta.title;
+  const ogTitle = document.querySelector('meta[property="og:title"]');
+  if (ogTitle) ogTitle.setAttribute('content', meta.title);
+
+  // 3. <meta name="description"> e og:description
+  let metaDesc = document.querySelector('meta[name="description"]');
+  if (!metaDesc) {
+    metaDesc = document.createElement('meta');
+    metaDesc.setAttribute('name', 'description');
+    document.head.appendChild(metaDesc);
+  }
+  metaDesc.setAttribute('content', meta.description);
+
+  const ogDesc = document.querySelector('meta[property="og:description"]');
+  if (ogDesc) ogDesc.setAttribute('content', meta.description);
+
+  // 4. Link canônico autorreferencial
+  let canonical = document.querySelector('link[rel="canonical"]');
+  if (!canonical) {
+    canonical = document.createElement('link');
+    canonical.setAttribute('rel', 'canonical');
+    document.head.appendChild(canonical);
+  }
+  canonical.setAttribute('href', meta.canonicalUrl);
+
+  // 5. Links hreflang recíprocos para todos os quatro idiomas e x-default
+  const hreflangConfigs = [
+    { lang: 'pt', url: 'https://www.curreai.com/pt/' },
+    { lang: 'en', url: 'https://www.curreai.com/en/' },
+    { lang: 'es', url: 'https://www.curreai.com/es/' },
+    { lang: 'fr', url: 'https://www.curreai.com/fr/' },
+    { lang: 'x-default', url: 'https://www.curreai.com/en/' },
+  ];
+
+  for (const config of hreflangConfigs) {
+    let link = document.querySelector(`link[rel="alternate"][hreflang="${config.lang}"]`);
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'alternate');
+      link.setAttribute('hreflang', config.lang);
+      document.head.appendChild(link);
+    }
+    link.setAttribute('href', config.url);
+  }
+}
+
+/**
+ * Detecta o idioma preferido a partir das preferências do navegador (navigator.languages e navigator.language).
+ * Percorre na ordem de preferência do usuário e retorna o primeiro suportado.
+ * Se nenhum idioma suportado for encontrado, retorna 'en' como padrão universal.
+ */
+export function detectBrowserLanguage(): Language {
+  if (typeof navigator === 'undefined') return 'en';
+
+  const candidates: string[] = [];
+  if (Array.isArray(navigator.languages) && navigator.languages.length > 0) {
+    for (const lang of navigator.languages) {
+      if (typeof lang === 'string' && lang.trim()) {
+        candidates.push(lang.trim());
+      }
+    }
+  }
+
+  if (typeof navigator.language === 'string' && navigator.language.trim()) {
+    candidates.push(navigator.language.trim());
+  }
+
+  for (const candidate of candidates) {
+    const matched = matchSupportedLanguage(candidate);
+    if (matched) {
+      return matched;
+    }
+  }
+
+  return 'en';
+}
+
+/**
+ * Recupera o idioma inicial de forma determinística antes da primeira renderização:
+ * 1. defaultLanguage explícito (se passado via props, por exemplo em renderização de PDF no servidor)
+ * 2. Idioma definido na URL (/pt/, /en/, /es/, /fr/), que tem prioridade sobre o localStorage
+ * 3. Em '/', verifica se há escolha manual salva válida no localStorage
+ * 4. Caso contrário em '/', detecta a preferência do navegador (navigator.languages / navigator.language)
+ *    sem gravar no localStorage; se nenhum bater, usa 'en'.
+ */
+export function getInitialLanguage(defaultLanguage?: Language): Language {
+  // 1. defaultLanguage explícito
+  if (defaultLanguage && (defaultLanguage === 'pt' || defaultLanguage === 'en' || defaultLanguage === 'es' || defaultLanguage === 'fr')) {
+    return defaultLanguage;
+  }
+
+  // 2. Idioma definido na URL (tem prioridade sobre o localStorage)
+  const urlLang = getLanguageFromPath();
+  if (urlLang) {
+    if (typeof document !== 'undefined') {
+      applyDocumentMetadata(urlLang);
+    }
+    return urlLang;
+  }
+
+  // 3. Em '/', escolha manual prévia do usuário no seletor (salva no localStorage)
+  let manualChoice: Language | null = null;
+  try {
+    if (typeof localStorage !== 'undefined') {
+      const saved = localStorage.getItem(MANUAL_LANG_STORAGE_KEY);
+      if (saved === 'pt' || saved === 'en' || saved === 'es' || saved === 'fr') {
+        manualChoice = saved;
+      }
+    }
+  } catch {
+    // Ignora erro de acesso ao localStorage
+  }
+
+  if (manualChoice) {
+    if (typeof document !== 'undefined') {
+      applyDocumentMetadata(manualChoice);
+    }
+    return manualChoice;
+  }
+
+  // 4. Detecção automática baseada no navegador (sem gravar no localStorage)
+  const detected = detectBrowserLanguage();
+  if (typeof document !== 'undefined') {
+    applyDocumentMetadata(detected);
+  }
+  return detected;
+}
+
+const LanguageContext = createContext<LanguageContextProps>({
+  language: 'pt',
+  setLanguage: () => {},
+  t: (key: string) => key,
+});
+
+export const LanguageProvider: React.FC<{ children: React.ReactNode; defaultLanguage?: Language }> = ({
+  children,
+  defaultLanguage,
+}) => {
+  // Inicializado de forma síncrona antes do primeiro render para evitar flash de tela em outro idioma
+  const [language, setLanguageState] = useState<Language>(() => getInitialLanguage(defaultLanguage));
+
+  // Normalização do caminho (ex: /pt -> /pt/) e sincronização inicial de metadados
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      if (/^\/(pt|en|es|fr)$/i.test(path)) {
+        window.history.replaceState(null, '', `${path}/${window.location.search}${window.location.hash}`);
+      }
+    }
+    applyDocumentMetadata(language);
+  }, [language]);
+
+  // Escuta navegação por popstate (botões Voltar/Avançar do navegador)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+
+    const handlePopState = () => {
+      const langFromUrl = getLanguageFromPath();
+      if (langFromUrl) {
+        setLanguageState(langFromUrl);
+        applyDocumentMetadata(langFromUrl);
+      } else if (window.location.pathname === '/' || window.location.pathname === '') {
+        let manualChoice: Language | null = null;
+        try {
+          const saved = localStorage.getItem(MANUAL_LANG_STORAGE_KEY);
+          if (saved === 'pt' || saved === 'en' || saved === 'es' || saved === 'fr') {
+            manualChoice = saved;
+          }
+        } catch {}
+        const targetLang = manualChoice || detectBrowserLanguage();
+        setLanguageState(targetLang);
+        applyDocumentMetadata(targetLang);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const setLanguage = (lang: Language) => {
+    setLanguageState(lang);
+
+    // 1. Grava a escolha manual no localStorage
+    try {
+      if (typeof localStorage !== 'undefined') {
+        localStorage.setItem(MANUAL_LANG_STORAGE_KEY, lang);
+      }
+    } catch {
+      // Ignora erro de gravação
+    }
+
+    // 2. Atualiza a URL mantendo o estado da aplicação e histórico do navegador
+    if (typeof window !== 'undefined') {
+      // Atualiza os metadados do documento (título, descrição, canonical) antes do pushState
+      applyDocumentMetadata(lang);
+
+      const targetUrl = `/${lang}/${window.location.search}${window.location.hash}`;
+      if (window.location.pathname !== `/${lang}/`) {
+        window.history.pushState(null, '', targetUrl);
+      }
+    }
+  };
+
+  const t = (key: string): string => {
+    const langDict = TRANSLATIONS[language];
+    if (langDict && langDict[key]) {
+      return langDict[key];
+    }
+    // Common aliases check
+    const aliases: Record<string, string> = {
+      step_3_no_exp_checkbox: 'step_3_no_exp_title',
+      step_3_no_exp_desc: 'step_3_no_exp_sub',
+      step_3_no_exp_active_title: 'step_3_no_exp_alert_title',
+      step_3_no_exp_active_desc: 'step_3_no_exp_alert_desc',
+      step_3_no_exp_switch_back: 'step_3_no_exp_revert',
+      step_3_exp_num: 'step_3_company_number',
+      step_3_field_company: 'step_3_company_label',
+      step_3_field_role: 'step_3_role_label',
+      step_3_field_start: 'step_3_start_label',
+      step_3_field_end: 'step_3_end_label',
+      step_3_field_current: 'step_3_current_job',
+      step_3_field_activities: 'step_3_activities_label',
+      step_3_field_results: 'step_3_results_label',
+      step_4_field_course: 'step_4_course_label',
+      step_4_field_institution: 'step_4_inst_label',
+      step_4_field_start_year: 'step_4_start_year',
+      step_4_field_end_year: 'step_4_end_year',
+      step_4_field_status: 'step_4_status_label',
+      step_5_label: 'step_5_skills_title',
+      step_5_tools_label: 'step_5_tools_title',
+      step_5_custom_placeholder: 'step_5_skills_custom_ph',
+      step_5_tools_custom_placeholder: 'step_5_tools_custom_ph',
+      step_5_add_btn: 'btn_add',
+      step_6_empty_title: 'step_6_empty',
+      step_6_empty_btn: 'step_6_add_first',
+      step_6_field_name: 'step_6_name_label',
+      step_6_field_institution: 'step_6_inst_label',
+      step_6_field_year: 'step_6_year_label',
+      step_6_field_hours: 'step_6_hours_label',
+      step_7_badge: 'step_7_tag',
+      step_7_textarea_label: 'step_7_desc_label',
+      step_7_ethics_desc: 'step_7_ethics_text',
+      step_7_btn_analyze: 'step_7_analyze_btn',
+      step_7_btn_analyzing: 'step_7_analyzing_btn',
+      step_8_badge: 'step_8_tag',
+      step_8_btn_edit: 'step_8_edit_btn',
+      step_8_pending_notice: 'step_8_btn_sub_disabled',
+      step_8_guarantee: 'step_8_btn_sub',
+    };
+
+    const targetKey = aliases[key] || key;
+    if (langDict && langDict[targetKey]) {
+      return langDict[targetKey];
+    }
+    if (TRANSLATIONS.pt[targetKey]) {
+      return TRANSLATIONS.pt[targetKey];
+    }
+    if (TRANSLATIONS.pt[key]) {
+      return TRANSLATIONS.pt[key];
+    }
+    // Clean fallback to avoid raw keys in UI
+    return key.replace(/^step_\d+_/, "").replace(/_label$|_title$|_ph$/, "").replace(/_/g, " ");
+  };
+
+  return (
+    <LanguageContext.Provider value={{ language, setLanguage, t }}>
+      {children}
+    </LanguageContext.Provider>
+  );
+};
+
+export const useLanguage = () => useContext(LanguageContext);
+
+export function translateEduStatus(status: string | undefined, t: (k: string) => string): string {
+  if (!status) return '';
+  const s = status.toLowerCase().trim();
+  if (s.includes('conclu') || s.includes('complete') || s.includes('termin')) {
+    return t('tmpl_status_completed');
+  }
+  if (s.includes('anda') || s.includes('prog') || s.includes('cours') || s.includes('curs')) {
+    return t('tmpl_status_in_progress');
+  }
+  if (s.includes('interr') || s.includes('incomp') || s.includes('pause')) {
+    return t('tmpl_status_interrupted');
+  }
+  return status;
+}
