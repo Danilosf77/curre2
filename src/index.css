@@ -1,0 +1,818 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --glass-bg: rgba(255, 255, 255, 0.72);
+    --glass-border: rgba(255, 255, 255, 0.65);
+    --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
+  }
+
+  :root.dark {
+    --glass-bg: rgba(15, 23, 42, 0.75);
+    --glass-border: rgba(51, 65, 85, 0.6);
+    --glass-shadow: 0 12px 36px 0 rgba(0, 0, 0, 0.4);
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at 15% 15%, rgba(219, 234, 254, 0.5) 0%, rgba(240, 249, 255, 0.3) 35%, rgba(248, 250, 252, 1) 75%);
+    background-attachment: fixed;
+    color: #0f172a;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    transition: background-color 0.25s ease, color 0.25s ease;
+  }
+
+  html.dark body {
+    background: radial-gradient(circle at 20% 15%, rgba(14, 116, 144, 0.18) 0%, rgba(15, 23, 42, 0.95) 45%, rgba(10, 15, 29, 1) 85%);
+    background-attachment: fixed;
+    color: #f1f5f9;
+  }
+}
+
+/* Liquid Glass Utilities with Dark Mode adaptations */
+.liquid-glass {
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 0 10px 30px -10px rgba(14, 116, 144, 0.08), 0 20px 40px -20px rgba(0, 0, 0, 0.05);
+}
+
+html.dark .liquid-glass {
+  background: rgba(15, 23, 42, 0.78);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+  box-shadow: 0 14px 34px -10px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.05) inset;
+}
+
+.liquid-glass-subtle {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+html.dark .liquid-glass-subtle {
+  background: rgba(30, 41, 59, 0.55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(71, 85, 105, 0.4);
+}
+
+.liquid-glass-card {
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 0 12px 36px -12px rgba(15, 23, 42, 0.08), 0 0 0 1px rgba(255, 255, 255, 0.7) inset;
+}
+
+html.dark .liquid-glass-card {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(51, 65, 85, 0.8);
+  box-shadow: 0 16px 40px -12px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+}
+
+.liquid-glass-card-dark {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.4);
+}
+
+.liquid-glass-button {
+  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+  box-shadow: 0 6px 20px -4px rgba(2, 132, 199, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.25) inset;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.liquid-glass-button:hover {
+  box-shadow: 0 10px 28px -4px rgba(2, 132, 199, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  transform: translateY(-1px);
+}
+
+.liquid-glass-pill {
+  background: rgba(241, 245, 249, 0.75);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+html.dark .liquid-glass-pill {
+  background: rgba(30, 41, 59, 0.7);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(51, 65, 85, 0.7);
+}
+
+/* Global input & form adjustments in dark mode (excluding the resume document sheet) */
+html.dark input:not(#resume-document *),
+html.dark textarea:not(#resume-document *),
+html.dark select:not(#resume-document *) {
+  background-color: rgba(30, 41, 59, 0.85) !important;
+  color: #f1f5f9 !important;
+  border-color: rgba(71, 85, 105, 0.6) !important;
+}
+
+/* Form Labels, Field Titles and Helper Texts in Dark Mode */
+html.dark label:not(#resume-document *),
+html.dark .liquid-glass-card label,
+html.dark .form-label {
+  color: #f1f5f9 !important; /* crisp slate-100 */
+}
+
+html.dark label:not(#resume-document *) > span:first-child,
+html.dark .liquid-glass-card label > span:first-child {
+  color: #f8fafc !important; /* bright white for label title */
+}
+
+/* Helper text like "Obrigatório", "(opcional)", "Padrão: (11) 98765-4321" */
+html.dark label:not(#resume-document *) span.text-slate-400,
+html.dark label:not(#resume-document *) span.text-slate-500,
+html.dark label:not(#resume-document *) span.font-normal,
+html.dark .liquid-glass-card label span.text-slate-400,
+html.dark .liquid-glass-card label span.text-slate-500 {
+  color: #cbd5e1 !important; /* clearly legible soft slate-300 */
+}
+
+/* Modals & Dialogs dark theme consistency */
+html.dark .liquid-glass-card {
+  color: #f1f5f9;
+}
+
+html.dark .liquid-glass-card h1,
+html.dark .liquid-glass-card h2,
+html.dark .liquid-glass-card h3,
+html.dark .liquid-glass-card h4 {
+  color: #f8fafc;
+}
+
+html.dark .liquid-glass-card p:not(.text-sky-600):not(.text-emerald-600):not(.text-amber-600) {
+  color: #cbd5e1;
+}
+
+html.dark .liquid-glass-card .bg-slate-50,
+html.dark .liquid-glass-card .bg-white\/70,
+html.dark .liquid-glass-card .bg-white\/80,
+html.dark .liquid-glass-card .bg-white\/90 {
+  background-color: rgba(30, 41, 59, 0.75) !important;
+  border-color: rgba(51, 65, 85, 0.7) !important;
+  color: #e2e8f0 !important;
+}
+
+/* Login Modal Notice Box in Dark Mode */
+html.dark .login-info-box {
+  background-color: rgba(30, 41, 59, 0.95) !important;
+  border-color: rgba(71, 85, 105, 0.8) !important;
+}
+
+html.dark .login-info-box p {
+  color: #f1f5f9 !important;
+}
+
+html.dark .login-info-box span {
+  color: #7dd3fc !important;
+}
+
+html.dark .login-info-box svg {
+  color: #38bdf8 !important;
+}
+
+/* Amber Tip / Warning Banners in Dark Mode */
+html.dark [class*="bg-amber-50"]:not(#template-btn-impact) {
+  background-color: rgba(69, 26, 3, 0.55) !important;
+  border-color: rgba(180, 83, 9, 0.6) !important;
+  color: #fef3c7 !important;
+}
+
+html.dark [class*="bg-amber-50"]:not(#template-btn-impact) p,
+html.dark [class*="bg-amber-50"]:not(#template-btn-impact) span {
+  color: #fde68a !important;
+}
+
+html.dark [class*="bg-amber-50"]:not(#template-btn-impact) svg {
+  color: #fbbf24 !important;
+}
+
+/* Impact Template Selected Card in Dark Mode - High Contrast Legibility */
+html.dark #template-btn-impact[class*="bg-amber-50"] {
+  background-color: rgba(69, 26, 3, 0.65) !important;
+  border-color: rgba(245, 158, 11, 0.7) !important;
+}
+
+html.dark #template-btn-impact[class*="bg-amber-50"] .impact-badge {
+  background-color: #fde68a !important; /* amber-200 */
+  color: #451a03 !important; /* amber-950 high contrast text */
+}
+
+html.dark #template-btn-impact[class*="bg-amber-50"] .impact-title {
+  color: #fef3c7 !important; /* amber-100 */
+}
+
+html.dark #template-btn-impact[class*="bg-amber-50"] p {
+  color: #fde68a !important; /* amber-200 */
+}
+
+html.dark #template-btn-impact[class*="bg-amber-50"] svg {
+  color: #fbbf24 !important; /* amber-400 */
+}
+
+html.dark input:not(#resume-document *)::placeholder,
+html.dark textarea:not(#resume-document *)::placeholder {
+  color: #94a3b8 !important;
+}
+
+html.dark input:not(#resume-document *):focus,
+html.dark textarea:not(#resume-document *):focus,
+html.dark select:not(#resume-document *):focus {
+  border-color: #38bdf8 !important;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(56, 189, 248, 0.25) !important;
+}
+
+/* Critical Rule: Resume Document MUST always preserve crisp white paper, optimal ATS readability and exact print colors */
+#resume-document,
+#resume-document * {
+  color-scheme: light !important;
+}
+
+.resume-paper {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* Resume Document Styling for Screen & Print */
+.resume-paper,
+.resume-paper * {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  -webkit-touch-callout: none !important;
+}
+
+/* Deterministic Contact Component for Screen & PDF Canvas (html2canvas) */
+.contact-item {
+  display: inline-flex !important;
+  align-items: center !important;
+  vertical-align: middle !important;
+}
+
+.contact-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 14px !important;
+  width: 14px !important;
+  height: 14px !important;
+  line-height: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.contact-icon svg {
+  display: block !important;
+  width: 14px !important;
+  height: 14px !important;
+  flex-shrink: 0 !important;
+  vertical-align: middle !important;
+}
+
+.contact-text {
+  display: inline-block !important;
+  vertical-align: middle !important;
+  line-height: 1.35 !important;
+}
+
+/* Modo transitório de impressão do currículo */
+body.curre-print-mode .no-print {
+  display: none !important;
+}
+
+body.curre-print-mode #resume-document {
+  box-shadow: none !important;
+  border-radius: 0 !important;
+}
+
+/* =========================================================================
+   REGRAS DE IMPRESSÃO NATIVA VETORIAL (A4 / window.print)
+   Garante PDF 100% vetorial, texto selecionável, SVGs originais nítidos
+   e suporte fluido para currículos de 1 ou múltiplas páginas.
+========================================================================= */
+@media print {
+  /* 1. Preservação estrita de cores, contrastes, gradientes e gráficos de fundo */
+  *,
+  *::before,
+  *::after {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* 2. Configuração de página A4 portrait sem margens forçadas no @page para evitar cabeçalhos de URL do navegador */
+  @page {
+    size: A4 portrait;
+    margin: 0;
+  }
+
+  /* 3. Reset do documento e do body */
+  html,
+  body {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    overflow: visible !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* 4. Oculta todos os elementos de UI do aplicativo (barras, menus, botões, modais, etc.) */
+  .no-print,
+  nav,
+  header:not(#resume-document header),
+  footer,
+  #theme-toggle,
+  #btn-download-pdf,
+  #btn-adapt-other-job,
+  #btn-edit-resume,
+  #btn-regenerate,
+  #btn-save-resume,
+  .ats-diagnostic-panel,
+  .liquid-glass,
+  .fixed,
+  .sticky,
+  button,
+  [role="dialog"],
+  [aria-modal="true"] {
+    display: none !important;
+  }
+
+  /* 5. Garante que todos os ancestrais de #resume-document não cortem conteúdo nem criem espaços vazios */
+  #root,
+  main:not(#resume-document main):not(.impact-resume-content),
+  .min-h-screen,
+  .resume-preview-root,
+  .max-w-5xl,
+  div:has(> #resume-document),
+  div:has(> * > #resume-document),
+  .resume-paper-container {
+    display: block !important;
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    max-width: 100% !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    transform: none !important;
+  }
+
+  /* 6. Formatação do currículo #resume-document para preenchimento natural de A4 */
+  #resume-document,
+  .resume-paper {
+    display: block !important;
+    position: relative !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    max-width: 210mm !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 auto !important;
+    border: none !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    outline: none !important;
+    transform: none !important;
+    overflow: visible !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    page-break-after: auto !important;
+    break-after: auto !important;
+  }
+
+  /* 7. Seleção e cópia de texto vetorial habilitadas no PDF gerado */
+  #resume-document,
+  #resume-document *,
+  .resume-paper,
+  .resume-paper * {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+  }
+
+  /* 8. Preservação vetorial cristalina dos SVGs do Lucide e ícones de contato */
+  #resume-document svg,
+  .resume-paper svg {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    print-color-adjust: exact !important;
+    -webkit-print-color-adjust: exact !important;
+  }
+
+  .contact-icon {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-shrink: 0 !important;
+    width: 14px !important;
+    height: 14px !important;
+    line-height: 1 !important;
+  }
+
+  .contact-icon svg {
+    display: block !important;
+    width: 14px !important;
+    height: 14px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .contact-text {
+    display: inline-block !important;
+    vertical-align: middle !important;
+    line-height: 1.35 !important;
+  }
+
+  /* 9. Quebra de página inteligente: currículos continuam em páginas seguintes sem cortar */
+  *,
+  *::before,
+  *::after {
+    overflow-wrap: anywhere !important;
+  }
+
+  p, span, a, h1, h2, h3, h4, li, div {
+    overflow-wrap: anywhere !important;
+  }
+
+  section {
+    break-inside: auto !important;
+    page-break-inside: auto !important;
+  }
+
+  h1, h2, h3, h4, .section-header {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    break-inside: avoid !important;
+  }
+
+  .break-inside-avoid,
+  .experience-card,
+  .experience-item,
+  .space-y-4 > div,
+  li,
+  ul > li,
+  .contact-item {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* 10. Ajuste estrutural do documento e do template Impact em largura A4 (210mm) */
+  #resume-document {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    box-sizing: border-box !important;
+    background-color: transparent !important;
+  }
+
+  /* Regras canônicas para a tabela de impressão do template Impact */
+  table.impact-print-table {
+    width: 210mm !important;
+    max-width: 210mm !important;
+    table-layout: fixed !important;
+    border-collapse: collapse !important;
+    border-spacing: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+  }
+
+  colgroup col.impact-col-sidebar {
+    width: 67.2mm !important;
+  }
+  colgroup col.impact-col-main {
+    width: 142.8mm !important;
+  }
+
+  /* Spacers de margem de 12mm no topo (thead) e base (tfoot) de cada página */
+  thead.impact-print-spacer,
+  tfoot.impact-print-spacer {
+    height: 12mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+  }
+
+  thead.impact-print-spacer th,
+  tfoot.impact-print-spacer td {
+    height: 12mm !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+  }
+
+  thead.impact-print-spacer th.impact-sidebar-spacer,
+  tfoot.impact-print-spacer td.impact-sidebar-spacer {
+    width: 67.2mm !important;
+    min-width: 67.2mm !important;
+    max-width: 67.2mm !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  thead.impact-print-spacer th.impact-main-spacer,
+  tfoot.impact-print-spacer td.impact-main-spacer {
+    width: 142.8mm !important;
+    min-width: 142.8mm !important;
+    max-width: 142.8mm !important;
+    background: transparent !important;
+    border: none !important;
+  }
+
+  /* Células do conteúdo no tbody */
+  tbody td.impact-sidebar-cell {
+    width: 67.2mm !important;
+    min-width: 67.2mm !important;
+    max-width: 67.2mm !important;
+    padding: 0 5mm 0 12mm !important;
+    vertical-align: top !important;
+    border: none !important;
+    background: transparent !important;
+    color: #f1f5f9 !important;
+    box-sizing: border-box !important;
+  }
+
+  tbody td.impact-main-cell {
+    width: 142.8mm !important;
+    min-width: 142.8mm !important;
+    max-width: 142.8mm !important;
+    padding: 0 12mm 0 8mm !important;
+    vertical-align: top !important;
+    border: none !important;
+    background: transparent !important;
+    color: #0f172a !important;
+    box-sizing: border-box !important;
+  }
+
+  tbody td.impact-main-cell * {
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}
+
+/* Regras globais de layout para renderização */
+.impact-resume-layout {
+  box-sizing: border-box;
+}
+.impact-resume-sidebar {
+  box-sizing: border-box;
+}
+.impact-resume-content {
+  box-sizing: border-box;
+}
+
+/* =========================================================================
+   REFINAMENTO VISUAL — Animações, micro-interações e polish global
+   (Nenhuma regra abaixo afeta #resume-document / templates de currículo)
+========================================================================= */
+
+/* Compatibilidade: utilitários de animação estilo "animate-in" usados na UI.
+   (Definidos manualmente para funcionar sem o plugin tailwindcss-animate.) */
+@keyframes tw-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes tw-slide-in-from-top {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes tw-slide-in-from-bottom {
+  from { opacity: 0; transform: translateY(12px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+.animate-in { animation-duration: 200ms; animation-fill-mode: both; animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1); }
+.fade-in { animation-name: tw-fade-in; }
+.duration-150.animate-in { animation-duration: 150ms; }
+.duration-200.animate-in { animation-duration: 200ms; }
+.duration-300.animate-in { animation-duration: 300ms; }
+.slide-in-from-top-2 { animation-name: tw-slide-in-from-top; }
+/* Quando usado junto com fade-in, o slide tem prioridade visual (combina ambos) */
+.animate-in.fade-in.slide-in-from-top-2 { animation-name: tw-slide-in-from-top, tw-fade-in; }
+
+/* Scrollbar fina e elegante (apenas UI, nunca o documento do currículo) */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(2, 132, 199, 0.45), rgba(8, 145, 178, 0.45));
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(2, 132, 199, 0.75), rgba(8, 145, 178, 0.75));
+  background-clip: padding-box;
+}
+html.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.35), rgba(34, 211, 238, 0.35));
+  background-clip: padding-box;
+}
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(56, 189, 248, 0.6), rgba(34, 211, 238, 0.6));
+  background-clip: padding-box;
+}
+
+/* Foco visível acessível para toda a interface */
+:not(#resume-document):not(#resume-document *):focus-visible {
+  outline: 2px solid rgba(2, 132, 199, 0.65);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+html.dark :not(#resume-document):not(#resume-document *):focus-visible {
+  outline-color: rgba(56, 189, 248, 0.75);
+}
+
+/* ---- Keyframes de refinamento ---- */
+@keyframes curre-fade-up {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes curre-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes curre-float {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-10px); }
+}
+@keyframes curre-float-slow {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50%      { transform: translate(12px, -16px) scale(1.04); }
+}
+@keyframes curre-shimmer {
+  from { background-position: 200% center; }
+  to   { background-position: -200% center; }
+}
+@keyframes curre-pulse-ring {
+  0%   { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0.35); }
+  70%  { box-shadow: 0 0 0 10px rgba(2, 132, 199, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(2, 132, 199, 0); }
+}
+@keyframes curre-gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50%      { background-position: 100% 50%; }
+}
+@keyframes curre-caret-blink {
+  0%, 45% { opacity: 1; }
+  50%, 95% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/* ---- Classes utilitárias de entrada flutuante ---- */
+.animate-fade-up {
+  animation: curre-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.animate-fade-in {
+  animation: curre-fade-in 0.6s ease-out both;
+}
+.animate-float {
+  animation: curre-float 6s ease-in-out infinite;
+}
+.animate-float-slow {
+  animation: curre-float-slow 14s ease-in-out infinite;
+}
+.animate-pulse-ring {
+  animation: curre-pulse-ring 2.4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+.animate-caret {
+  animation: curre-caret-blink 1.1s steps(1) infinite;
+}
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+.delay-500 { animation-delay: 0.5s; }
+
+/* Texto com gradiente animado sutil (títulos hero) */
+.text-gradient-animated {
+  background-size: 200% auto;
+  animation: curre-gradient-shift 6s ease-in-out infinite;
+}
+
+/* Shine sweep em botões primários ao passar o mouse */
+.btn-shine {
+  position: relative;
+  overflow: hidden;
+}
+.btn-shine::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255, 255, 255, 0.35) 50%, transparent 60%);
+  background-size: 250% 100%;
+  background-position: 200% center;
+  transition: none;
+  pointer-events: none;
+}
+.btn-shine:hover::after {
+  animation: curre-shimmer 0.9s ease forwards;
+}
+
+/* Cartas de features/valores com elevação suave */
+.card-lift {
+  transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.35s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.35s ease;
+}
+.card-lift:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 22px 44px -18px rgba(2, 132, 199, 0.22), 0 8px 20px -12px rgba(15, 23, 42, 0.12);
+}
+html.dark .card-lift:hover {
+  box-shadow: 0 22px 44px -18px rgba(0, 0, 0, 0.65), 0 0 0 1px rgba(56, 189, 248, 0.18) inset;
+}
+
+/* Glow ambiente dos blobs decorativos do fundo (hero) */
+.ambient-orb {
+  filter: blur(48px);
+  opacity: 0.55;
+  will-change: transform;
+}
+html.dark .ambient-orb {
+  opacity: 0.4;
+}
+
+/* Brilho pulsante atrás da mockup card do hero */
+.hero-card-glow {
+  animation: curre-gradient-shift 8s ease-in-out infinite;
+  background-size: 200% 200%;
+}
+
+/* Barra de progresso das etapas com textura viva */
+.progress-flow {
+  background: linear-gradient(90deg, #0284c7, #06b6d4, #3b82f6, #0284c7);
+  background-size: 300% 100%;
+  animation: curre-shimmer 4s linear infinite;
+}
+
+/* Inputs com realce premium ao focar (somente UI) */
+html:not(.dark) input:not(#resume-document *):focus,
+html:not(.dark) textarea:not(#resume-document *):focus,
+html:not(.dark) select:not(#resume-document *):focus {
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.14) !important;
+  outline: none;
+}
+
+/* Transição suave para os passos do wizard */
+.wizard-step-enter {
+  animation: curre-fade-up 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Navbar com sombra mais rica ao rolar */
+.nav-elevated {
+  box-shadow: 0 12px 32px -12px rgba(2, 132, 199, 0.18), 0 4px 12px -6px rgba(15, 23, 42, 0.08) !important;
+}
+
+/* Reduz movimento para quem prefere acessibilidade */
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up,
+  .animate-fade-in,
+  .animate-float,
+  .animate-float-slow,
+  .animate-pulse-ring,
+  .animate-caret,
+  .text-gradient-animated,
+  .progress-flow,
+  .hero-card-glow,
+  .btn-shine:hover::after,
+  .wizard-step-enter {
+    animation: none !important;
+  }
+  .card-lift:hover {
+    transform: none;
+  }
+}
+
+
+
